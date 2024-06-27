@@ -1,0 +1,11 @@
+{
+  "include": [
+    "vite.config.*",
+    "vitest.config.*",
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "types": ["node"]
+  }
+}
