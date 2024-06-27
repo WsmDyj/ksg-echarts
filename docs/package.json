@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm register:components && vitepress dev",
-    "build": "pnpm register:components && vitepress build",
+    "build": "pnpm register:components && vitepress build docs",
     "serve": "vitepress serve",
     "register:components": "vitepress-rc --docsDir ."
   },
