@@ -3,7 +3,7 @@
 `ksg-Echarts` 组件的基本属性包括 **数据** 与 **配置项**。
 
 ```vue
-<ve-bar-chart
+<ksg-pie-chart
   :data="chartData"           // 数据
   :option="chartoption"       // 图表配置
 />

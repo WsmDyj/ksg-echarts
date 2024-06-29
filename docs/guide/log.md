@@ -2,4 +2,4 @@
 
 ## v0.0.1
 
-ksg-charts 基础版本诞生
+ksg-echarts 基础版本诞生
