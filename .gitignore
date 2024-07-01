@@ -1,6 +1,3 @@
-56942BMN 8
-|_-------_«««\\\\\\''''DRCF TYM
-.9FMY8RT.................. Logs
 logs
 *.log
 npm-debug.log*
@@ -13,7 +10,6 @@ dist
 
 node_modules
 *.local
-034[;`,`]80# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -24,4 +20,3 @@ node_modules
 *.njsproj
 *.sln
 *.sw?
-620RN
