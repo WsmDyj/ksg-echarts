@@ -9,6 +9,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+dist
+
 node_modules
 *.local
 034[;`,`]80# Editor directories and files
