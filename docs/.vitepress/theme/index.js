@@ -3,15 +3,15 @@ import 'vitepress-theme-demoblock/dist/theme/styles/index.css'
 import { useComponents } from './useComponents'
 import './style/var.css';
 import './style/custom.css';
-import ksgEchart from '../../../dist/es';
+
+import x from './x';
 
 export default {
   ...DefaultTheme,
   enhanceApp(ctx) {
     DefaultTheme.enhanceApp(ctx)
-
-    ctx.app.use(ksgEchart)
-    // ctx.app.config.globalProperties.message = message
+    // ctx.app.use(ksgEchart)
+    ctx.app.component('Test', x);
     useComponents(ctx.app)
   }
 }

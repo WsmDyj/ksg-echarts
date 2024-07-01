@@ -5,6 +5,7 @@
 </template>
 <script setup>
 import { ref} from 'vue'
+import { ksgPieChart } from 'ksg-echarts'
 const option = ref({
   series: {
     label: {

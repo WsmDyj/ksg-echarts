@@ -29,6 +29,9 @@ export default defineConfig({
         '@alias': path.resolve(__dirname, '../')
       }
     },
+    ssr: {
+      noExternal: ['vue-echarts', 'echarts', 'zrender', 'resize-detector', 'ksg-echart'],
+    }
   },
 
   vue: {

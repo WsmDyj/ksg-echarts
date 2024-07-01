@@ -1,7 +1,7 @@
 {
   "name": "ksg-echarts",
   "description": "echarts组件",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/WsmDyj/ksg-echarts"
@@ -33,10 +33,11 @@
     },
     "./style": {
       "import": "./dist/es/style.css"
-    }
+    },
+    "./*": "./*"
   },
   "keywords": [
-    "ksg-pro-components"
+    "ksg-echarts"
   ],
   "author": "wusimin",
   "license": "ISC",
