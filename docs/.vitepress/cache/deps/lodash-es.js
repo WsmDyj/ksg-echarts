@@ -1,5 +1,3 @@
-import "./chunk-SSYGV25P.js";
-
 // ../node_modules/lodash-es/_freeGlobal.js
 var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
 var freeGlobal_default = freeGlobal;
