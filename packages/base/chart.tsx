@@ -2,7 +2,7 @@
  * @Author: wusimin wusimin@kuaishou.com
  * @Date: 2024-06-26 16:16:58
  * @LastEditors: wusimin wusimin@kuaishou.com
- * @LastEditTime: 2024-07-01 18:03:20
+ * @LastEditTime: 2024-07-01 22:57:06
  * @FilePath: /kwaida/packages/kwaida-charts/packages/base/chart.tsx
  * @Description: 基础组件
  */
@@ -21,18 +21,9 @@ import {
 } from 'echarts/components';
 import { merge } from 'lodash-es';
 
-use([
-  CanvasRenderer,
-  DatasetComponent,
-  TransformComponent,
-  TitleComponent,
-  TooltipComponent,
-  LegendComponent
-]);
-
 export default defineComponent({
   components: { VChart },
-  name: 'BaseChart',
+  name: 'KsgBaseChart',
   props: {
     option: Object as PropType<Option>,
     theme: {
@@ -46,6 +37,14 @@ export default defineComponent({
     ...loadingProps
   },
   setup(props) {
+    use([
+      CanvasRenderer,
+      DatasetComponent,
+      TransformComponent,
+      TitleComponent,
+      TooltipComponent,
+      LegendComponent
+    ]);
     const option = computed(() => {
       const { legend = {}, tooltip = {} } = props.option;
       const legendTemp = {
@@ -62,7 +61,7 @@ export default defineComponent({
         legend: merge(legendTemp, legend),
         tooltip: merge(tooltipTemp, tooltip)
       };
-    })
+    });
     return () => (
       <v-chart
         style={{ height: '100%', width: '100%' }}
@@ -72,5 +71,5 @@ export default defineComponent({
         autoresize={true}
       />
     );
-  },
+  }
 });

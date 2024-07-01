@@ -1,5 +1,5 @@
 import { defineComponent as o, createVNode as a, mergeProps as m } from "vue";
-import { BaseChart as r } from "../../base/index.js";
+import { KsgBaseChart as r } from "../../base/index.js";
 import p from "./helper.js";
 import { useWatchChartData as i } from "../../hook/useWatchChartData.js";
 import { install as n } from "../../node_modules/echarts/lib/chart/pie/install.js";

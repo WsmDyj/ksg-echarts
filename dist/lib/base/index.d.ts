@@ -2,7 +2,7 @@ import { CreateComponentPublicInstance, ExtractPropTypes, PropType, ComponentOpt
 import { LoadingOptions, Theme } from '../types';
 import { ECBasicOption, EChartsInitOpts } from 'echarts/types/dist/shared';
 import { SetOptionOpts } from 'echarts/types/dist/echarts';
-declare const BaseChart: {
+declare const KsgBaseChart: {
     new (...args: any[]): CreateComponentPublicInstance<Readonly< ExtractPropTypes<{
         loading: BooleanConstructor;
         loadingOptions: PropType<LoadingOptions>;
@@ -101,5 +101,5 @@ declare const BaseChart: {
 }, {}, string, {}> & VNodeProps & AllowedComponentProps & ComponentCustomProps & {
     install(app: App<any>): void;
 } & Plugin;
-export { BaseChart };
-export default BaseChart;
+export { KsgBaseChart };
+export default KsgBaseChart;

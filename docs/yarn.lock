@@ -1804,10 +1804,10 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-ksg-echarts@0.0.4:
-  version "0.0.4"
-  resolved "https://registry.npmjs.org/ksg-echarts/-/ksg-echarts-0.0.4.tgz#a9a38d4c1f25a1341d896758b44ac15fe407a3a3"
-  integrity sha512-EcGV4xQec08BS5H9+jl3kzhkdD7fQCopZiy2AUnhV8BDDRCiGwbBrcOKSPmv7Yz224pBxDkfhXYZ8vqR9qo/7w==
+ksg-echarts@0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/ksg-echarts/-/ksg-echarts-0.0.8.tgz#3d5182c991f65911bd36efdf0eff58e3223fa8ec"
+  integrity sha512-o7KQOC1gAi4G7mB2X64a1uB8UlOX24Dk60IxtJtszdPH0kvIhSFnpKN2TYINzvWIJPciMNyDHAPzDwA+ak/ZlA==
   dependencies:
     echarts "^5.5.1"
     vue "^3.3.4"

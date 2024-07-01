@@ -1,13 +1,14 @@
-import { PieChart as o } from "./pie/index.js";
-const a = [o], e = (n) => {
-  a.forEach((t) => {
-    n.component(t.name, t);
+import { KsgPieChart as s } from "./pie/index.js";
+import { KsgBaseChart as a } from "./base/index.js";
+const n = [s, a], r = (t) => {
+  n.forEach((o) => {
+    t.component(o.name, o);
   });
-}, r = {
-  install: e,
-  KsgPieChart: o
+}, c = {
+  install: r
 };
 export {
-  o as PieChart,
-  r as default
+  a as KsgBaseChart,
+  s as KsgPieChart,
+  c as default
 };

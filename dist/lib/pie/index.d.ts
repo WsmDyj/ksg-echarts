@@ -2,7 +2,7 @@ import { CreateComponentPublicInstance, ExtractPropTypes, PropType, ComponentOpt
 import { KsgDataset, LoadingOptions, Theme } from '../types';
 import { ECBasicOption, EChartsInitOpts } from 'echarts/types/dist/shared';
 import { SetOptionOpts } from 'echarts/types/dist/echarts';
-declare const PieChart: {
+declare const KsgPieChart: {
     new (...args: any[]): CreateComponentPublicInstance<Readonly< ExtractPropTypes<{
         data: PropType<KsgDataset>;
     }>>, () => any, unknown, {}, {}, ComponentOptionsMixin, {
@@ -272,5 +272,5 @@ declare const PieChart: {
 } & Plugin, {}, string, {}, {}, string, {}> & VNodeProps & AllowedComponentProps & ComponentCustomProps & {
     install(app: App<any>): void;
 } & Plugin;
-export { PieChart };
-export default PieChart;
+export { KsgPieChart };
+export default KsgPieChart;

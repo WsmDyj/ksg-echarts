@@ -1,11 +1,11 @@
 <template>
   <div class="ksg-charts">
-    <ksg-pie-chart :data="chartData" :option="option"/>
+    <KsgPieChart :data="chartData" :option="option"/>
   </div>
 </template>
 <script setup>
 import { ref} from 'vue'
-import { ksgPieChart } from 'ksg-echarts'
+import { KsgPieChart } from '../../../packages/pie/index'
 const option = ref({
   series: {
     label: {

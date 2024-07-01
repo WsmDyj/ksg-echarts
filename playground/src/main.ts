@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import ksgEcharts from '../../packages/index'
+// import ksgEcharts from 'ksg-echarts'
 
-createApp(App).use(ksgEcharts).mount('#app')
+createApp(App).mount('#app')
 
 import 'default-passive-events';

@@ -1,4 +1,4 @@
-import { defineComponent as m, computed as p, createVNode as a, resolveComponent as s, mergeProps as u } from "vue";
+import { defineComponent as m, computed as p, createVNode as s, resolveComponent as a, mergeProps as u } from "vue";
 import c from "../node_modules/vue-echarts/dist/index.esm.min.js";
 import { loadingProps as f } from "../composables/loading.js";
 import { autoresizeProps as g } from "../composables/autoresize.js";
@@ -10,12 +10,11 @@ import { install as O } from "../node_modules/echarts/lib/component/transform/in
 import { install as C } from "../node_modules/echarts/lib/component/title/install.js";
 import { install as $ } from "../node_modules/echarts/lib/component/tooltip/install.js";
 import { install as j } from "../node_modules/echarts/lib/component/legend/install.js";
-d([h, b, O, C, $, j]);
-const N = /* @__PURE__ */ m({
+const M = /* @__PURE__ */ m({
   components: {
     VChart: c
   },
-  name: "BaseChart",
+  name: "KsgBaseChart",
   props: {
     option: Object,
     theme: {
@@ -29,6 +28,7 @@ const N = /* @__PURE__ */ m({
     ...f
   },
   setup(t) {
+    d([h, b, O, C, $, j]);
     const e = p(() => {
       const {
         legend: r = {},
@@ -47,7 +47,7 @@ const N = /* @__PURE__ */ m({
         tooltip: o(l, i)
       };
     });
-    return () => a(s("v-chart"), u({
+    return () => s(a("v-chart"), u({
       style: {
         height: "100%",
         width: "100%"
@@ -62,5 +62,5 @@ const N = /* @__PURE__ */ m({
   }
 });
 export {
-  N as default
+  M as default
 };
