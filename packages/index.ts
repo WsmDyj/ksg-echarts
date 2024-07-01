@@ -1,12 +1,11 @@
 
 import type { App } from 'vue';
 
-export * from './pie'
-import { PieChart } from './pie';
+export * from './pie/index'
 
-const components = [PieChart];
+import KsgPieChart from './pie/index';
 
-export { PieChart };
+const components = [KsgPieChart];
 
 const install = (app: App): void => {
   components.forEach((component) => {
@@ -14,4 +13,7 @@ const install = (app: App): void => {
   });
 };
 
-export default install;
+export default {
+  install,
+  KsgPieChart
+};

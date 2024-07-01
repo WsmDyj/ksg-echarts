@@ -1,13 +1,8 @@
 <template>
- 
-  <div>
-     
-    <PieChart :data="chartData" :option="option"></PieChart>
-  </div>
+  <ksg-pie-chart :data="chartData" :option="option"/>
 </template>
 <script setup>
 import { ref} from 'vue'
-import { PieChart } from '../../../packages/index'
 
 const option = ref({
       title: {

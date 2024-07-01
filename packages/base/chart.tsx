@@ -2,7 +2,7 @@
  * @Author: wusimin wusimin@kuaishou.com
  * @Date: 2024-06-26 16:16:58
  * @LastEditors: wusimin wusimin@kuaishou.com
- * @LastEditTime: 2024-06-27 14:13:48
+ * @LastEditTime: 2024-06-28 23:59:56
  * @FilePath: /kwaida/packages/kwaida-charts/packages/base/chart.tsx
  * @Description: 基础组件
  */
@@ -47,7 +47,7 @@ export default defineComponent({
   setup(props) {
     return () => (
       <v-chart
-        style={{ height: '100%' }}
+        style={{ height: '100vh' }}
         update-options={{ notMerge: true }}
         {...props}
         autoresize={true}

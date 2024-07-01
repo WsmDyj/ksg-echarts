@@ -1,0 +1,1 @@
+"use strict";Object.defineProperties(exports,{__esModule:{value:!0},[Symbol.toStringTag]:{value:"Module"}});const e=require("./pie/index.js"),r=[e.PieChart],a=i=>{r.forEach(t=>{i.component(t.name,t)})},n={install:a,KsgPieChart:e.PieChart};exports.PieChart=e.PieChart;exports.default=n;

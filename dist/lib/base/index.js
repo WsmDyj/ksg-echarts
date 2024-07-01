@@ -1,0 +1,1 @@
+"use strict";Object.defineProperties(exports,{__esModule:{value:!0},[Symbol.toStringTag]:{value:"Module"}});const t=require("../utils.js"),r=require("./chart.js"),e=t.withInstall(r.default);exports.BaseChart=e;exports.default=e;
