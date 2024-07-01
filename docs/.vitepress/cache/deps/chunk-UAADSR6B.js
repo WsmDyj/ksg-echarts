@@ -1,3 +1,9 @@
+var __defProp = Object.defineProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+
 // node_modules/@vue/shared/dist/shared.esm-bundler.js
 function makeMap(str, expectsLowerCase) {
   const set2 = new Set(str.split(","));
@@ -252,11 +258,14 @@ function looseEqual(a, b) {
 function looseIndexOf(arr, val) {
   return arr.findIndex((item) => looseEqual(item, val));
 }
+var isRef = (val) => {
+  return !!(val && val.__v_isRef === true);
+};
 var toDisplayString = (val) => {
-  return isString(val) ? val : val == null ? "" : isArray(val) || isObject(val) && (val.toString === objectToString || !isFunction(val.toString)) ? JSON.stringify(val, replacer, 2) : String(val);
+  return isString(val) ? val : val == null ? "" : isArray(val) || isObject(val) && (val.toString === objectToString || !isFunction(val.toString)) ? isRef(val) ? toDisplayString(val.value) : JSON.stringify(val, replacer, 2) : String(val);
 };
 var replacer = (_key, val) => {
-  if (val && val.__v_isRef) {
+  if (isRef(val)) {
     return replacer(_key, val.value);
   } else if (isMap(val)) {
     return {
@@ -390,7 +399,7 @@ var ReactiveEffect = class {
     this.scheduler = scheduler;
     this.active = true;
     this.deps = [];
-    this._dirtyLevel = 5;
+    this._dirtyLevel = 4;
     this._trackId = 0;
     this._runnings = 0;
     this._shouldSchedule = false;
@@ -398,20 +407,14 @@ var ReactiveEffect = class {
     recordEffectScope(this, scope);
   }
   get dirty() {
-    if (this._dirtyLevel === 2)
-      return false;
-    if (this._dirtyLevel === 3 || this._dirtyLevel === 4) {
+    if (this._dirtyLevel === 2 || this._dirtyLevel === 3) {
       this._dirtyLevel = 1;
       pauseTracking();
       for (let i = 0; i < this._depsLength; i++) {
         const dep = this.deps[i];
         if (dep.computed) {
-          if (dep.computed.effect._dirtyLevel === 2) {
-            resetTracking();
-            return true;
-          }
           triggerComputed(dep.computed);
-          if (this._dirtyLevel >= 5) {
+          if (this._dirtyLevel >= 4) {
             break;
           }
         }
@@ -421,10 +424,10 @@ var ReactiveEffect = class {
       }
       resetTracking();
     }
-    return this._dirtyLevel >= 5;
+    return this._dirtyLevel >= 4;
   }
   set dirty(v) {
-    this._dirtyLevel = v ? 5 : 0;
+    this._dirtyLevel = v ? 4 : 0;
   }
   run() {
     this._dirtyLevel = 0;
@@ -547,17 +550,8 @@ function triggerEffects(dep, dirtyLevel, debuggerEventExtraInfo) {
   pauseScheduling();
   for (const effect2 of dep.keys()) {
     let tracking;
-    if (!dep.computed && effect2.computed) {
-      if (effect2._runnings > 0 && (tracking != null ? tracking : tracking = dep.get(effect2) === effect2._trackId)) {
-        effect2._dirtyLevel = 2;
-        continue;
-      }
-    }
     if (effect2._dirtyLevel < dirtyLevel && (tracking != null ? tracking : tracking = dep.get(effect2) === effect2._trackId)) {
       effect2._shouldSchedule || (effect2._shouldSchedule = effect2._dirtyLevel === 0);
-      if (effect2.computed && effect2._dirtyLevel === 2) {
-        effect2._shouldSchedule = true;
-      }
       effect2._dirtyLevel = dirtyLevel;
     }
     if (effect2._shouldSchedule && (tracking != null ? tracking : tracking = dep.get(effect2) === effect2._trackId)) {
@@ -565,7 +559,7 @@ function triggerEffects(dep, dirtyLevel, debuggerEventExtraInfo) {
         (_a = effect2.onTrigger) == null ? void 0 : _a.call(effect2, extend({ effect: effect2 }, debuggerEventExtraInfo));
       }
       effect2.trigger();
-      if ((!effect2._runnings || effect2.allowRecurse) && effect2._dirtyLevel !== 3) {
+      if ((!effect2._runnings || effect2.allowRecurse) && effect2._dirtyLevel !== 2) {
         effect2._shouldSchedule = false;
         if (effect2.scheduler) {
           queueEffectSchedulers.push(effect2.scheduler);
@@ -655,7 +649,7 @@ function trigger(target, type, key, newValue, oldValue, oldTarget) {
     if (dep) {
       triggerEffects(
         dep,
-        5,
+        4,
         true ? {
           target,
           type,
@@ -753,7 +747,7 @@ var BaseReactiveHandler = class {
     if (isShallow2) {
       return res;
     }
-    if (isRef(res)) {
+    if (isRef2(res)) {
       return targetIsArray && isIntegerKey(key) ? res : res.value;
     }
     if (isObject(res)) {
@@ -774,7 +768,7 @@ var MutableReactiveHandler = class extends BaseReactiveHandler {
         oldValue = toRaw(oldValue);
         value = toRaw(value);
       }
-      if (!isArray(target) && isRef(oldValue) && !isRef(value)) {
+      if (!isArray(target) && isRef2(oldValue) && !isRef2(value)) {
         if (isOldValueReadonly) {
           return false;
         } else {
@@ -1255,7 +1249,7 @@ var ComputedRefImpl = class {
       () => getter(this._value),
       () => triggerRefValue(
         this,
-        this.effect._dirtyLevel === 3 ? 3 : 4
+        this.effect._dirtyLevel === 2 ? 2 : 3
       )
     );
     this.effect.computed = this;
@@ -1264,11 +1258,8 @@ var ComputedRefImpl = class {
   }
   get value() {
     const self2 = toRaw(this);
-    const lastDirtyLevel = self2.effect._dirtyLevel;
     if ((!self2._cacheable || self2.effect.dirty) && hasChanged(self2._value, self2._value = self2.effect.run())) {
-      if (lastDirtyLevel !== 3) {
-        triggerRefValue(self2, 5);
-      }
+      triggerRefValue(self2, 4);
     }
     trackRefValue(self2);
     if (self2.effect._dirtyLevel >= 2) {
@@ -1277,7 +1268,7 @@ var ComputedRefImpl = class {
 
 getter: `, this.getter);
       }
-      triggerRefValue(self2, 3);
+      triggerRefValue(self2, 2);
     }
     return self2._value;
   }
@@ -1331,7 +1322,7 @@ function trackRefValue(ref2) {
     );
   }
 }
-function triggerRefValue(ref2, dirtyLevel = 5, newVal, oldVal) {
+function triggerRefValue(ref2, dirtyLevel = 4, newVal, oldVal) {
   ref2 = toRaw(ref2);
   const dep = ref2.dep;
   if (dep) {
@@ -1348,7 +1339,7 @@ function triggerRefValue(ref2, dirtyLevel = 5, newVal, oldVal) {
     );
   }
 }
-function isRef(r) {
+function isRef2(r) {
   return !!(r && r.__v_isRef === true);
 }
 function ref(value) {
@@ -1358,7 +1349,7 @@ function shallowRef(value) {
   return createRef(value, true);
 }
 function createRef(rawValue, shallow) {
-  if (isRef(rawValue)) {
+  if (isRef2(rawValue)) {
     return rawValue;
   }
   return new RefImpl(rawValue, shallow);
@@ -1382,15 +1373,15 @@ var RefImpl = class {
       const oldVal = this._rawValue;
       this._rawValue = newVal;
       this._value = useDirectValue ? newVal : toReactive(newVal);
-      triggerRefValue(this, 5, newVal, oldVal);
+      triggerRefValue(this, 4, newVal, oldVal);
     }
   }
 };
 function triggerRef(ref2) {
-  triggerRefValue(ref2, 5, true ? ref2.value : void 0);
+  triggerRefValue(ref2, 4, true ? ref2.value : void 0);
 }
 function unref(ref2) {
-  return isRef(ref2) ? ref2.value : ref2;
+  return isRef2(ref2) ? ref2.value : ref2;
 }
 function toValue(source) {
   return isFunction(source) ? source() : unref(source);
@@ -1399,7 +1390,7 @@ var shallowUnwrapHandlers = {
   get: (target, key, receiver) => unref(Reflect.get(target, key, receiver)),
   set: (target, key, value, receiver) => {
     const oldValue = target[key];
-    if (isRef(oldValue) && !isRef(value)) {
+    if (isRef2(oldValue) && !isRef2(value)) {
       oldValue.value = value;
       return true;
     } else {
@@ -1470,7 +1461,7 @@ var GetterRefImpl = class {
   }
 };
 function toRef(source, key, defaultValue) {
-  if (isRef(source)) {
+  if (isRef2(source)) {
     return source;
   } else if (isFunction(source)) {
     return new GetterRefImpl(source);
@@ -1482,7 +1473,7 @@ function toRef(source, key, defaultValue) {
 }
 function propertyToRef(source, key, defaultValue) {
   const val = source[key];
-  return isRef(val) ? val : new ObjectRefImpl(source, key, defaultValue);
+  return isRef2(val) ? val : new ObjectRefImpl(source, key, defaultValue);
 }
 var TrackOpTypes = {
   "GET": "get",
@@ -1595,7 +1586,7 @@ function formatProp(key, value, raw) {
     return raw ? value : [`${key}=${value}`];
   } else if (typeof value === "number" || typeof value === "boolean" || value == null) {
     return raw ? value : [`${key}=${value}`];
-  } else if (isRef(value)) {
+  } else if (isRef2(value)) {
     value = formatProp(key, toRaw(value.value), true);
     return raw ? value : [`${key}=Ref<`, value, `>`];
   } else if (isFunction(value)) {
@@ -4224,7 +4215,7 @@ function resolveInjections(injectOptions, ctx, checkDuplicateProperties = NOOP) 
     } else {
       injected = inject(opt);
     }
-    if (isRef(injected)) {
+    if (isRef2(injected)) {
       Object.defineProperty(ctx, key, {
         enumerable: true,
         configurable: true,
@@ -5177,7 +5168,7 @@ function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
       if (hasOwn(setupState, oldRef)) {
         setupState[oldRef] = null;
       }
-    } else if (isRef(oldRef)) {
+    } else if (isRef2(oldRef)) {
       oldRef.value = null;
     }
   }
@@ -5185,7 +5176,7 @@ function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
     callWithErrorHandling(ref2, owner, 12, [value, refs]);
   } else {
     const _isString = isString(ref2);
-    const _isRef = isRef(ref2);
+    const _isRef = isRef2(ref2);
     if (_isString || _isRef) {
       const doSet = () => {
         if (rawRef.f) {
@@ -7516,7 +7507,7 @@ function doWatch(source, cb, {
   let getter;
   let forceTrigger = false;
   let isMultiSource = false;
-  if (isRef(source)) {
+  if (isRef2(source)) {
     getter = () => source.value;
     forceTrigger = isShallow(source);
   } else if (isReactive(source)) {
@@ -7526,7 +7517,7 @@ function doWatch(source, cb, {
     isMultiSource = true;
     forceTrigger = source.some((s) => isReactive(s) || isShallow(s));
     getter = () => source.map((s) => {
-      if (isRef(s)) {
+      if (isRef2(s)) {
         return s.value;
       } else if (isReactive(s)) {
         return reactiveGetter(s);
@@ -7686,7 +7677,7 @@ function traverse(value, depth = Infinity, seen) {
   }
   seen.add(value);
   depth--;
-  if (isRef(value)) {
+  if (isRef2(value)) {
     traverse(value.value, depth, seen);
   } else if (isArray(value)) {
     for (let i = 0; i < value.length; i++) {
@@ -8662,7 +8653,7 @@ var normalizeRef = ({
   if (typeof ref2 === "number") {
     ref2 = "" + ref2;
   }
-  return ref2 != null ? isString(ref2) || isRef(ref2) || isFunction(ref2) ? { i: currentRenderingInstance, r: ref2, k: ref_key, f: !!ref_for } : ref2 : null;
+  return ref2 != null ? isString(ref2) || isRef2(ref2) || isFunction(ref2) ? { i: currentRenderingInstance, r: ref2, k: ref_key, f: !!ref_for } : ref2 : null;
 };
 function createBaseVNode(type, props = null, children = null, patchFlag = 0, dynamicProps = null, shapeFlag = type === Fragment ? 0 : 1, isBlockNode = false, needFullChildrenNormalization = false) {
   const vnode = {
@@ -9306,7 +9297,7 @@ function createSetupContext(instance) {
         if (exposedType === "object") {
           if (isArray(exposed)) {
             exposedType = "array";
-          } else if (isRef(exposed)) {
+          } else if (isRef2(exposed)) {
             exposedType = "ref";
           }
         }
@@ -9487,7 +9478,7 @@ function initCustomFormatter() {
       }
       if (obj.__isVue) {
         return ["div", vueStyle, `VueInstance`];
-      } else if (isRef(obj)) {
+      } else if (isRef2(obj)) {
         return [
           "div",
           {},
@@ -9672,7 +9663,7 @@ function isMemoSame(cached, memo) {
   }
   return true;
 }
-var version = "3.4.30";
+var version = "3.4.31";
 var warn2 = true ? warn$1 : NOOP;
 var ErrorTypeStrings = ErrorTypeStrings$1;
 var devtools = true ? devtools$1 : void 0;
@@ -11312,6 +11303,7 @@ var compile2 = () => {
 };
 
 export {
+  __export,
   camelize,
   capitalize,
   toHandlerKey,
@@ -11336,7 +11328,7 @@ export {
   isProxy,
   toRaw,
   markRaw,
-  isRef,
+  isRef2 as isRef,
   ref,
   shallowRef,
   triggerRef,
@@ -11476,7 +11468,7 @@ export {
 
 @vue/shared/dist/shared.esm-bundler.js:
   (**
-  * @vue/shared v3.4.30
+  * @vue/shared v3.4.31
   * (c) 2018-present Yuxi (Evan) You and Vue contributors
   * @license MIT
   **)
@@ -11484,14 +11476,14 @@ export {
 
 @vue/reactivity/dist/reactivity.esm-bundler.js:
   (**
-  * @vue/reactivity v3.4.30
+  * @vue/reactivity v3.4.31
   * (c) 2018-present Yuxi (Evan) You and Vue contributors
   * @license MIT
   **)
 
 @vue/runtime-core/dist/runtime-core.esm-bundler.js:
   (**
-  * @vue/runtime-core v3.4.30
+  * @vue/runtime-core v3.4.31
   * (c) 2018-present Yuxi (Evan) You and Vue contributors
   * @license MIT
   **)
@@ -11499,7 +11491,7 @@ export {
 
 @vue/runtime-dom/dist/runtime-dom.esm-bundler.js:
   (**
-  * @vue/runtime-dom v3.4.30
+  * @vue/runtime-dom v3.4.31
   * (c) 2018-present Yuxi (Evan) You and Vue contributors
   * @license MIT
   **)
@@ -11507,9 +11499,9 @@ export {
 
 vue/dist/vue.runtime.esm-bundler.js:
   (**
-  * vue v3.4.30
+  * vue v3.4.31
   * (c) 2018-present Yuxi (Evan) You and Vue contributors
   * @license MIT
   **)
 */
-//# sourceMappingURL=chunk-UH3YCPEJ.js.map
+//# sourceMappingURL=chunk-UAADSR6B.js.map
