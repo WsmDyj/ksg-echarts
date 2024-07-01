@@ -1,47 +1,47 @@
 var g = Object.defineProperty;
-var l = (e, t, s) => t in e ? g(e, t, { enumerable: !0, configurable: !0, writable: !0, value: s }) : e[t] = s;
-var r = (e, t, s) => (l(e, typeof t != "symbol" ? t + "" : t, s), s);
-import { getDataset as h } from "../../utils.js";
-class m {
+var f = (e, t, s) => t in e ? g(e, t, { enumerable: !0, configurable: !0, writable: !0, value: s }) : e[t] = s;
+var o = (e, t, s) => (f(e, typeof t != "symbol" ? t + "" : t, s), s);
+import { getDataset as u } from "../../utils.js";
+import { merge as l } from "lodash-es";
+class D {
   constructor(t) {
-    r(this, "$props");
-    r(this, "data");
-    r(this, "option");
+    o(this, "$props");
+    o(this, "data");
+    o(this, "option");
     this.$props = t, this.data = this.$props.data, this.option = this.$props.option;
   }
   // 配置数据集
   getPieDataset() {
     const t = [], s = this.data, i = this.option;
     if (!Array.isArray(s))
-      t.push(h(s, i, { chartType: "pie" }));
+      t.push(u(s, i, { chartType: "pie" }));
     else if (Array.isArray(s) && s.length > 1)
-      for (const o of s)
-        t.push(h(o, i, { chartType: "pie" }));
+      for (const r of s)
+        t.push(u(r, i, { chartType: "pie" }));
     return t;
   }
   getPieSeries() {
-    var i, o;
+    var i, r;
     let t = [];
     const s = ((i = this.option) == null ? void 0 : i.variant) === "donut";
-    return t = (o = this.data) == null ? void 0 : o.measures.map(({ name: c }, u) => {
-      var a, p, n;
-      const d = ((n = (p = (a = this.$props) == null ? void 0 : a.option) == null ? void 0 : p.series) == null ? void 0 : n[u]) || {};
+    return t = (r = this.data) == null ? void 0 : r.measures.map(({ name: d }, m) => {
+      var a, p, n, h, c;
+      const y = Array.isArray((a = this == null ? void 0 : this.option) == null ? void 0 : a.series) ? (n = (p = this == null ? void 0 : this.option) == null ? void 0 : p.series) == null ? void 0 : n[m] : ((c = (h = this.$props) == null ? void 0 : h.option) == null ? void 0 : c.series) || {};
       return {
         type: "pie",
-        name: c,
+        name: d,
         radius: s ? ["35%", "60%"] : [0, "60%"],
-        ...d
+        ...y
       };
     }), t;
   }
   getChartOption() {
-    return {
+    return l({
       dataset: this.getPieDataset(),
-      series: this.getPieSeries(),
-      ...this.option
-    };
+      series: this.getPieSeries()
+    }, this.option);
   }
 }
 export {
-  m as default
+  D as default
 };

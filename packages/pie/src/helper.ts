@@ -3,7 +3,7 @@
  * @Author: wusimin wusimin@kuaishou.com
  * @Date: 2024-06-26 17:07:36
  * @LastEditors: wusimin wusimin@kuaishou.com
- * @LastEditTime: 2024-06-27 11:44:58
+ * @LastEditTime: 2024-07-01 18:36:38
  * @FilePath: /kwaida/packages/kwaida-charts/packages/base/helper.ts
  * @Description: 统一数据格式
  */
@@ -12,6 +12,7 @@ import { Option, KsgChartsData, KsgChartsProps } from '../../types';
 import { PieSeriesOption } from 'echarts/charts';
 import { ComposeOption } from 'echarts/core';
 import { getDataset } from '../../utils';
+import { merge } from 'lodash-es';
 
 type PieChartOptions = ComposeOption<PieSeriesOption | ChartCommonOption>;
 
@@ -40,13 +41,12 @@ export default class PieHelper {
     }
     return dataset;
   }
-
   getPieSeries() {
     let series: Array<PieChartOptions> = [];
     // 是否圆环
     const isDonut = this.option?.variant === 'donut';
     series = this.data?.measures.map(({ name }, idx) => {
-      const seriesItem = this.$props?.option?.series?.[idx] || {};
+      const seriesItem = Array.isArray(this?.option?.series) ? this?.option?.series?.[idx] : this.$props?.option?.series || {}
       return {
         type: 'pie',
         name,
@@ -57,12 +57,13 @@ export default class PieHelper {
     return series;
   }
 
+
+
   getChartOption() {
-    const option = {
+    const option = merge({
       dataset: this.getPieDataset(),
       series: this.getPieSeries(),
-      ...this.option
-    };
+    }, this.option)
     return option as Option;
   }
 }

@@ -68,6 +68,7 @@ export const getDataset = (data: KsgChartsData, settings?: AnyRecord, options?: 
   let dims = [];
   const firstDim = dimName === undefined ? 'dimension' : dimName;
   dims.push(firstDim);
+  // eslint-disable-next-line no-unsafe-optional-chaining
   dims = [...dims, ...cloneData?.measures?.map((v) => v.name)];
 
   const source = Object.assign({}, dimensions, measures);
@@ -76,5 +77,6 @@ export const getDataset = (data: KsgChartsData, settings?: AnyRecord, options?: 
     dimensions: dims,
     source
   };
+  console.log(dataset)
   return dataset;
 };

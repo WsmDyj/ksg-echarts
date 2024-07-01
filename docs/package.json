@@ -21,6 +21,8 @@
     "vue": "^3.4.21"
   },
   "dependencies": {
-    "ksg-echarts": "^0.0.2"
+    "@vitepress-demo-preview/component": "^2.3.2",
+    "@vitepress-demo-preview/plugin": "^1.2.3",
+    "ksg-echarts": "^0.0.3"
   }
 }

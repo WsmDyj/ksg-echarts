@@ -2,11 +2,11 @@
  * @Author: wusimin wusimin@kuaishou.com
  * @Date: 2024-06-26 16:16:58
  * @LastEditors: wusimin wusimin@kuaishou.com
- * @LastEditTime: 2024-06-28 23:59:56
+ * @LastEditTime: 2024-07-01 18:03:20
  * @FilePath: /kwaida/packages/kwaida-charts/packages/base/chart.tsx
  * @Description: 基础组件
  */
-import { defineComponent, PropType } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 import VChart from 'vue-echarts';
 import { InitOptions, Option, Theme, UpdateOptions } from '../types'
 import { loadingProps, autoresizeProps } from '../composables';
@@ -19,6 +19,7 @@ import {
   DatasetComponent,
   TransformComponent
 } from 'echarts/components';
+import { merge } from 'lodash-es';
 
 use([
   CanvasRenderer,
@@ -45,11 +46,29 @@ export default defineComponent({
     ...loadingProps
   },
   setup(props) {
+    const option = computed(() => {
+      const { legend = {}, tooltip = {} } = props.option;
+      const legendTemp = {
+        type: 'scroll',
+        orient: 'horizontal',
+        bottom: 'bottom'
+      };
+      const tooltipTemp = {
+        trigger: 'item',
+        confine: true
+      };
+      return {
+        ...props.option,
+        legend: merge(legendTemp, legend),
+        tooltip: merge(tooltipTemp, tooltip)
+      };
+    })
     return () => (
       <v-chart
-        style={{ height: '100vh' }}
+        style={{ height: '100%', width: '100%' }}
         update-options={{ notMerge: true }}
         {...props}
+        option={option.value}
         autoresize={true}
       />
     );

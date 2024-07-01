@@ -1,11 +1,12 @@
-import { ref as c, watchEffect as r } from "vue";
-function i(n, t) {
-  const a = c();
-  return r(() => {
-    const o = new n(t).getChartOption();
-    a.value = { ...o, ...t.option };
-  }), a;
+import { merge as e } from "lodash-es";
+import { ref as n, watchEffect as c } from "vue";
+function m(r, t) {
+  const o = n();
+  return c(() => {
+    const a = new r(t).getChartOption();
+    o.value = e(a, t.option);
+  }), o;
 }
 export {
-  i as useWatchChartData
+  m as useWatchChartData
 };

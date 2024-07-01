@@ -1,7 +1,8 @@
 <template>
   <div class="demoblock" :class="[customClass ? customClass : '']">
     <div class="demoblock-view">
-      <slot></slot>
+      jdka
+      <!-- <slot></slot> -->
     </div>
   </div>
 </template>

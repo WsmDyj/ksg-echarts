@@ -90,7 +90,10 @@
     height: 0%!important;
   }
   .content-container {
-    max-width: 1050px !important;
+    max-width: 2050px !important;
+  }
+  .main {
+    width: 100%;
   }
 }
 .VPContent.has-sidebar {
@@ -131,6 +134,28 @@
   margin: 0;
 }
 
-.demoblock-custom {
-  height: 300px;
+.ksg-chart {
+  height: 500px;
+}
+.demoblock {
+  position: relative;
+  display: flex;
+}
+.demoblock-view {
+  flex: 1;
+  display: block!important;
+  float: right;
+  order: 2;
+}
+.demoblock-source {
+  display: block!important;
+  flex: 1;
+  float: left;
+  order: 1;
+}
+.demoblock-divider {
+  display: none!important;
+}
+.demoblock-op-btns {
+  display: none!important;
 }

@@ -1,1 +1,1 @@
-"use strict";Object.defineProperty(exports,Symbol.toStringTag,{value:"Module"});const a=require("vue");function r(c,t){const e=a.ref();return a.watchEffect(()=>{const n=new c(t).getChartOption();e.value={...n,...t.option}}),e}exports.useWatchChartData=r;
+"use strict";Object.defineProperty(exports,Symbol.toStringTag,{value:"Module"});const n=require("lodash-es"),a=require("vue");function o(r,t){const e=a.ref();return a.watchEffect(()=>{const c=new r(t).getChartOption();e.value=n.merge(c,t.option)}),e}exports.useWatchChartData=o;
