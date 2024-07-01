@@ -15,9 +15,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<!-- <style scoped>
 .demoblock {
   margin: 10px 0;
+  height: 300px!important;
 }
 .demoblock .demoblock-view {
   border: solid 1px #ebebeb;
@@ -26,4 +27,4 @@ export default {
   padding: 24px;
   transition: .2s;
 }
-</style>
+</style> -->

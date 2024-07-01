@@ -130,3 +130,7 @@
 .vp-doc ul, .vp-doc ol {
   margin: 0;
 }
+
+.demoblock-custom {
+  height: 300px;
+}
