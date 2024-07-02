@@ -1,74 +1,68 @@
 {
-  "hash": "819e70be",
-  "browserHash": "9903ffbd",
+  "hash": "5f9b6bc5",
+  "browserHash": "22dee0ee",
   "optimized": {
     "vue": {
       "src": "../../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
       "file": "vue.js",
-      "fileHash": "7eda14d4",
-      "needsInterop": false
-    },
-    "ksg-echarts": {
-      "src": "../../../node_modules/ksg-echarts/dist/es/index.js",
-      "file": "ksg-echarts.js",
-      "fileHash": "58d43afa",
-      "needsInterop": false
-    },
-    "lodash-es": {
-      "src": "../../../../node_modules/lodash-es/lodash.js",
-      "file": "lodash-es.js",
-      "fileHash": "bc7db566",
-      "needsInterop": false
-    },
-    "echarts/charts": {
-      "src": "../../../../node_modules/echarts/charts.js",
-      "file": "echarts_charts.js",
-      "fileHash": "0f444c0c",
-      "needsInterop": false
-    },
-    "echarts/core": {
-      "src": "../../../../node_modules/echarts/core.js",
-      "file": "echarts_core.js",
-      "fileHash": "0b39cc97",
+      "fileHash": "fa6592e7",
       "needsInterop": false
     },
     "vue-echarts": {
       "src": "../../../../node_modules/vue-echarts/dist/index.esm.min.js",
       "file": "vue-echarts.js",
-      "fileHash": "64656915",
+      "fileHash": "2479e7c8",
+      "needsInterop": false
+    },
+    "echarts/core": {
+      "src": "../../../../node_modules/echarts/core.js",
+      "file": "echarts_core.js",
+      "fileHash": "f02a273f",
       "needsInterop": false
     },
     "echarts/renderers": {
       "src": "../../../../node_modules/echarts/renderers.js",
       "file": "echarts_renderers.js",
-      "fileHash": "b9c5fc27",
+      "fileHash": "66b61828",
       "needsInterop": false
     },
     "echarts/components": {
       "src": "../../../../node_modules/echarts/components.js",
       "file": "echarts_components.js",
-      "fileHash": "ca2bdb17",
+      "fileHash": "10a1b13c",
+      "needsInterop": false
+    },
+    "lodash-es": {
+      "src": "../../../../node_modules/lodash-es/lodash.js",
+      "file": "lodash-es.js",
+      "fileHash": "55688648",
+      "needsInterop": false
+    },
+    "echarts/charts": {
+      "src": "../../../../node_modules/echarts/charts.js",
+      "file": "echarts_charts.js",
+      "fileHash": "42bb79c2",
       "needsInterop": false
     }
   },
   "chunks": {
-    "chunk-OU3QNQWM": {
-      "file": "chunk-OU3QNQWM.js"
-    },
-    "chunk-B5CBVS6G": {
-      "file": "chunk-B5CBVS6G.js"
-    },
-    "chunk-6OMTQN2P": {
-      "file": "chunk-6OMTQN2P.js"
-    },
-    "chunk-LR2LLAHQ": {
-      "file": "chunk-LR2LLAHQ.js"
-    },
-    "chunk-5TPGGUKK": {
-      "file": "chunk-5TPGGUKK.js"
-    },
     "chunk-MT35GBDY": {
       "file": "chunk-MT35GBDY.js"
+    },
+    "chunk-S2E3U2ZI": {
+      "file": "chunk-S2E3U2ZI.js"
+    },
+    "chunk-Y6IFNWGW": {
+      "file": "chunk-Y6IFNWGW.js"
+    },
+    "chunk-BS6RHJFP": {
+      "file": "chunk-BS6RHJFP.js"
+    },
+    "chunk-GAETW6KD": {
+      "file": "chunk-GAETW6KD.js"
+    },
+    "chunk-CDQETP4X": {
+      "file": "chunk-CDQETP4X.js"
     },
     "chunk-SSYGV25P": {
       "file": "chunk-SSYGV25P.js"
