@@ -77,11 +77,11 @@ export default defineConfig({
           collapsible: false,
           items: [
             {
-              text: '介绍',
+              text: '简介',
               link: '/guide/'
             },
             {
-              text: '开始使用',
+              text: '快速上手',
               link: '/guide/usage'
             },
             {
@@ -98,6 +98,10 @@ export default defineConfig({
           text: '📈 图表',
           collapsible: false,
           items: [
+            {
+              text: '柱状图',
+              link: '/guide/charts/bar'
+            },
             {
               text: '饼图',
               link: '/guide/charts/pie'

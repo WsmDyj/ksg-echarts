@@ -137,6 +137,9 @@
 .ksg-chart {
   height: 500px;
 }
+.items {
+  margin-left: 24px;
+}
 .demoblock {
   position: relative;
   display: flex;
@@ -144,14 +147,16 @@
 .demoblock-view {
   flex: 1;
   display: block!important;
-  float: right;
   order: 2;
+  max-height: 500px;
+  overflow: hidden;
 }
 .demoblock-source {
   display: block!important;
   flex: 1;
-  float: left;
   order: 1;
+  max-height: 500px;
+  overflow: auto!important;
 }
 .demoblock-divider {
   display: none!important;

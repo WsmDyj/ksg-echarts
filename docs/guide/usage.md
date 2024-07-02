@@ -32,26 +32,23 @@ Vue.component('KsgPieChart', KsgPieChart)
 ```
 
 ## 创建图表
-
+在 ksg-echarts 引入页面后，我们就已经做好了创建第一个图表的准备了，下面以一个基础饼图为例开始我们第一个图表的创建。大部分 demos 使用了父容器宽高，请确保父容器宽高或者手动设置图表宽高。
 ```html
 <ksg-pie-chart :data="chartData" />
 ```
 
 ```js
 export default {
-  const chartData = {
-    dimensions: {
-      name: 'Week',
-      data: ['Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fir.', 'Sat.', 'Sun.']
-    },
-    measures: [{
-      name: 'PV',
-      data: [256, 767, 1356, 2087, 803, 582, 432]
-    }, {
-      name: 'UV',
-      data: [287, 707, 1756, 1822, 987, 432, 322]
-    }]
-  }
+  const chartData = ref([
+    { channel: '移动设备', pv1: 150000, },
+    { channel: 'PC', pv1: 90000 },
+    { channel: 'APP', pv: 40000, },
+    { channel: 'PC', pv: 30000 },
+    { channel: 'M端', pv: 20000 },
+    { channel: '微信', pv: 50000 },
+    { channel: '手Q', pv: 10000, },
+    { channel: '小程序', pv: 90000 },
+  ]);
 }
 ```
 
@@ -59,6 +56,6 @@ export default {
 
 | 图表 | 组件 |
 | --- | --- |
-| 折线图 | VeLineChart |
-| 柱状图 | VeBarChart |
-| 饼图 | VePieChart |
+| 折线图 | KsgLineChart |
+| 柱状图 | KsgBarChart |
+| 饼图 | KsgPieChart |
