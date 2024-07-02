@@ -77,6 +77,5 @@ export const getDataset = (data: KsgChartsData, settings?: AnyRecord, options?: 
     dimensions: dims,
     source
   };
-  console.log(dataset)
   return dataset;
 };

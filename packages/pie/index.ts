@@ -1,7 +1,7 @@
 /*
- * @Author: wusimin wusimin@kuaishou.com
+ * @Author: wusimin 
  * @Date: 2024-06-26 15:47:00
- * @LastEditors: wusimin wusimin@kuaishou.com
+ * @LastEditors: wusimin 
  * @LastEditTime: 2024-07-01 22:50:45
  * @FilePath: /kwaida/packages/kwaida-charts/packages/bar/index.tsx
  * @Description: 饼图

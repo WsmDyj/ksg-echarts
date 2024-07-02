@@ -1,7 +1,7 @@
 /*
- * @Author: wusimin wusimin@kuaishou.com
+ * @Author: wusimin 
  * @Date: 2024-06-26 17:59:18
- * @LastEditors: wusimin wusimin@kuaishou.com
+ * @LastEditors: wusimin 
  * @LastEditTime: 2024-06-27 10:24:18
  * @FilePath: /kwaida/packages/kwaida-charts/packages/types/echarts.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE

@@ -1,8 +1,8 @@
 /*
- * @Author: wusimin wusimin@kuaishou.com
+ * @Author: wusimin 
  * @Date: 2024-06-26 16:16:58
- * @LastEditors: wusimin wusimin@kuaishou.com
- * @LastEditTime: 2024-07-02 10:11:34
+ * @LastEditors: wusimin 
+ * @LastEditTime: 2024-07-02 14:13:11
  * @FilePath: /kwaida/packages/kwaida-charts/packages/base/chart.tsx
  * @Description: 基础组件
  */
@@ -57,17 +57,17 @@ export default defineComponent({
         confine: true
       };
       return {
-        autoresize: true,
-        updateOptions: { notMerge: true },
         ...props.option,
         legend: merge(legendTemp, legend),
         tooltip: merge(tooltipTemp, tooltip)
       };
     });
     return () => (
-      <v-chart
-        style={{ height: '100%', width: '100%' }}
-        option={option.value}
+      <v-chart 
+        updateOptions={{ notMerge: true }} 
+        style={{ height: '100%', width: '100%' }} 
+        autoresize={props.autoresize}
+        option={option.value} 
       />
     );
   }

@@ -3,10 +3,16 @@ import Pie from './components/pie.vue'
 </script>
 
 <template>
-  <Pie />
+  <div class="ksg-charts">
+    <Pie />
+  </div>
 </template>
 
 <style scoped>
+.ksg-charts {
+  width: 500px;
+  height: 500px;
+}
 .logo {
   height: 6em;
   padding: 1.5em;

@@ -1,50 +1,47 @@
 <template>
-  <div class="ksg-charts">
-    <KsgPieChart :data="chartData" :option="option"/>
-  </div>
+  <ksg-bar-chart :data="chartData" :option="option" />
 </template>
 <script setup>
-import { ref} from 'vue'
-import { KsgPieChart } from '../../../packages/pie/index'
+import { ref } from 'vue';
+import { KsgBarChart } from '../../../packages';
+const chartData = ref([
+    { week: 'Mon', pv: 256, uv:287 },
+    { week: 'Tue', pv: 767, uv:707 },
+    { week: 'Wed', pv: 1356, uv:1756},
+    { week: 'Thu', pv: 2087, uv:1822 },
+    { week: 'Fir', pv: 803, uv:987 },
+    { week: 'Sat', pv: 582, uv:432 },
+    { week: 'Sun', pv: 432, uv:322 }
+]);
 const option = ref({
-  series: {
-    label: {
-      show: false,
-      position: 'center'
-    },
-    labelLine: {
-      show: false
-    },
-  }
-  
-      // title: {
-      //   text: "Traffic Sources",
-      //   left: "center"
-      // },
-      // tooltip: {
-      //   trigger: "item",
-      //   confine: true
-      //   // formatter: "{a} <br/>{b} : {c} ({d}%)"
-      // },
-    })
-
-    const chartData = ref({
-          dimensions: {
-            name: "渠道",
-            data: ["Direct", "Email", "Ad Networks", "Video Ads", "Search Engines"]
-          },
-          measures: [
-            {
-              name: "Traffic Sources",
-              data: [10000, 27800, 22000, 20200, 15600]
-            }
-          ]
-        })
+  stack: {
+    sum: [ 'PV', 'UV' ]
+  },
+  yAxis: [
+    {  
+      max : 100,// 设置最大值是多少
+      splitNumber: 5,// 设置分几段显示
+      axisLabel: {  
+        show: true,  
+        interval: 'auto',  
+        formatter: '{value} %'  // 给每个数值添加%
+      },  
+      show: true
+    }  
+  ],
+  // 开启百分比模式
+  percentage: true,
+  // series: {
+  //     tooltip: {
+  //       formatter: function(params) {
+  //         const {dimensionNames, value } = params
+  //         const name = value[dimensionNames.slice(0, 1)]
+  //         const tooltipContent = dimensionNames.slice(1, dimensionNames.length)?.filter(it => it)?.map(v => {
+  //           return `${v}：${value[v]} %`
+  //         }).join('<br/>')
+  //       return name + '<br/>' + tooltipContent
+  //     }
+  //   }
+  // },
+})
 </script>
-<style>
-.ksg-charts{
-  height: 200px;
-  width: 200px;
-  overflow: hidden;
-}
-</style>
