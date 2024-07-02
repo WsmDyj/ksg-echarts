@@ -25,7 +25,6 @@ export default defineComponent({
   },
   setup(props) {
     const mergedOption = useWatchChartData(BarComputed, props);
-    console.log(mergedOption.value)
-    return () => <KsgBaseChart {...props} option={mergedOption.value} />;
+    return () => <KsgBaseChart {...props} option={mergedOption} />;
   }
 });

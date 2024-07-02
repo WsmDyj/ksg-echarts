@@ -97,15 +97,14 @@ const option = ref({
   stack: {
     sum: [ 'PV', 'UV' ]
   },
-  yAxis: [
-    {  
-      max : 100,// 设置最大值是多少
-      splitNumber: 5,// 设置分几段显示
-      axisLabel: {  
-        formatter: '{value} %'  // 给每个数值添加%
-      },  
-    }  
-  ],
+  yAxis: {  
+    max : 100,// 设置最大值是多少
+    splitNumber: 5,// 设置分几段显示
+    axisLabel: {  
+      formatter: '{value} %'  // 给每个数值添加%
+    },
+  }  
+  ,
   // 开启百分比模式
   percentage: true,
   series: {

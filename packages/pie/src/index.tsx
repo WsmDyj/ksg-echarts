@@ -24,6 +24,6 @@ export default defineComponent({
   },
   setup(props) {
     const mergedOption = useWatchChartData(PieComputed, props);
-    return () => <KsgBaseChart {...props} option={mergedOption.value} />;
+    return () => <KsgBaseChart {...props} option={mergedOption} />;
   }
 });

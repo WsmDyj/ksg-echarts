@@ -2,7 +2,7 @@
  * @Author: wusimin 
  * @Date: 2024-07-02 18:59:42
  * @LastEditors: wusimin wusimin@kuaishou.com
- * @LastEditTime: 2024-07-03 03:32:36
+ * @LastEditTime: 2024-07-03 04:08:15
  * @FilePath: /ksg-echarts/packages/bar/src/computed.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,7 +14,7 @@ import { ComposeOption } from 'echarts/core';
 
 type BarChartOptions = ComposeOption<BarSeriesOption | ChartCommonOption>;
 
-export default class BarComputed {
+export default class LineComputed {
   public $props: KsgChartsProps;
   public data: KsgChartsData;
   public option: Option;
@@ -37,46 +37,18 @@ export default class BarComputed {
   // 配置数据集
   getPieDataset() {
     const { dataset, dimensions } = useComputeDataset(this.data);
-    const keys = dimensions.slice(1, dimensions.length);
-    // 开启百分比模式
-    const percentage = this.option?.percentage;
-    if (percentage) {
-      this.data = this.data.map((item) => {
-        const sum = keys.reduce(
-          (acc: number, cur: keyof typeof item) => acc + parseFloat(item[cur]),
-          0
-        );
-        keys.forEach((it: keyof typeof item) => {
-          item[it] = this.percentage(item[it], sum);
-        });
-        return item;
-      });
-    }
-    if (this.isRowBar) {
-      this.data = this.data.map((item) => {
-        const reverseKeys = dimensions.reverse();
-        const newItem = {};
-        reverseKeys.forEach((key: string) => {
-          Reflect.set(newItem, key, get(item, key));
-        });
-        return newItem;
-      });
-    }
-    return { ...dataset, source: this.data };
+    return dataset;
   }
 
   getPieSeries() {
     let series: Array<BarChartOptions> = [];
     const dimensions = useComputeDataset(this.data)?.dimensions;
-    const seriesDim = this.isRowBar
-      ? dimensions.slice(0, dimensions.length-1)
-      : dimensions.slice(1, dimensions.length);
-    series = seriesDim.map((item, idx) => {
+    series = dimensions.slice(1, dimensions.length).map((item, idx) => {
       const seriesItem = this.$props?.option?.series?.[idx] || this.$props?.option?.series || {};
       return merge(
         {
-          type: 'bar',
-          name: item,
+          type: 'line',
+          name: item
         },
         seriesItem
       );
@@ -87,50 +59,35 @@ export default class BarComputed {
   getBarMeatAxis() {
     return {
       type: 'category',
-      axisLine: {
-        show: true
-      }
     };
   }
   getBarDimAxis() {
-    return { 
-      type: 'value', 
-      axisLine: {
-        show: true
-      } 
+    return {
+      type: 'value',
     };
   }
 
   getBarTooltip() {
-    return  {
+    return {
       trigger: 'axis',
       axisPointer: {
         // 坐标轴指示器，坐标轴触发有效
-        type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+        type: 'line' // 默认为直线，可选为：'line' | 'shadow'
       }
     };
   }
 
-  getBarGrid() {
-    return this.isRowBar ? {
-        right: 30,
-        left: 30,
-        containLabel: true
-      }
-    : {};
-  }
 
   getChartOption() {
     const option = merge(
       {
         // 声明一个 X 轴，类目轴（category）。默认情况下，类目轴对应到 dataset 第一列。
-        xAxis: this.isRowBar ? this.getBarDimAxis() : this.getBarMeatAxis(),
+        xAxis: this.getBarMeatAxis(),
         // 声明一个 Y 轴，数值轴。
-        yAxis: this.isRowBar ? this.getBarMeatAxis() : this.getBarDimAxis(),
+        yAxis: this.getBarDimAxis(),
         dataset: this.getPieDataset(),
         series: this.getPieSeries(),
         tooltip: this.getBarTooltip(),
-        grid: this.getBarGrid()
       },
       this.option
     );

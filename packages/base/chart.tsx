@@ -1,8 +1,8 @@
 /*
  * @Author: wusimin 
  * @Date: 2024-06-26 16:16:58
- * @LastEditors: wusimin 
- * @LastEditTime: 2024-07-02 14:13:11
+ * @LastEditors: wusimin wusimin@kuaishou.com
+ * @LastEditTime: 2024-07-03 05:38:53
  * @FilePath: /kwaida/packages/kwaida-charts/packages/base/chart.tsx
  * @Description: 基础组件
  */
@@ -20,12 +20,13 @@ import {
   TransformComponent
 } from 'echarts/components';
 import { merge } from 'lodash-es';
+import EmptyData from './emptyData';
 
 export default defineComponent({
   components: { VChart },
   name: 'KsgBaseChart',
   props: {
-    option: Object as PropType<Option>,
+    option: Object as PropType<Option & { isHasData: Boolean }>,
     theme: {
       type: [Object, String] as PropType<Theme>
     },
@@ -36,7 +37,7 @@ export default defineComponent({
     ...autoresizeProps,
     ...loadingProps
   },
-  setup(props) {
+  setup(props, { slots }) {
     use([
       CanvasRenderer,
       DatasetComponent,
@@ -62,13 +63,21 @@ export default defineComponent({
         tooltip: merge(tooltipTemp, tooltip)
       };
     });
-    return () => (
-      <v-chart 
-        updateOptions={{ notMerge: true }} 
-        style={{ height: '100%', width: '100%' }} 
-        autoresize={props.autoresize}
-        option={option.value} 
-      />
-    );
+    return () =>
+      !props.option?.isHasData && !props.loading ? (
+        slots.default ? (
+          slots.default()
+        ) : (
+          <EmptyData />
+        )
+      ) : (
+        <v-chart
+          updateOptions={{ notMerge: true }}
+          {...props}
+          style={{ height: '100%', width: '100%' }}
+          autoresize={props.autoresize}
+          option={option.value}
+        />
+      );
   }
 });

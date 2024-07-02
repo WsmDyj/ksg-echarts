@@ -99,12 +99,26 @@ export default defineConfig({
           collapsible: false,
           items: [
             {
+              text: '折线图',
+              link: '/guide/charts/line'
+            },
+            {
               text: '柱状图',
               link: '/guide/charts/bar'
             },
             {
               text: '饼图',
               link: '/guide/charts/pie'
+            },
+          ]
+        },
+        {
+          text: '🌴 其他',
+          collapsible: false,
+          items: [
+            {
+              text: '属性配置',
+              link: '/guide/other/attrs'
             },
           ]
         }
