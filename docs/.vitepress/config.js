@@ -30,7 +30,7 @@ export default defineConfig({
       }
     },
     ssr: {
-      noExternal: ['vue-echarts', 'echarts', 'zrender', 'resize-detector', 'ksg-echart'],
+      noExternal: ['vue-echarts', 'echarts', 'zrender', 'resize-detector', 'ksg-echarts'],
     }
   },
 

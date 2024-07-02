@@ -1,18 +1,18 @@
-import { defineComponent as m, computed as p, createVNode as s, resolveComponent as a, mergeProps as u } from "vue";
-import c from "../node_modules/vue-echarts/dist/index.esm.min.js";
-import { loadingProps as f } from "../composables/loading.js";
-import { autoresizeProps as g } from "../composables/autoresize.js";
+import { defineComponent as p, computed as m, createVNode as s, resolveComponent as a } from "vue";
+import u from "../node_modules/vue-echarts/dist/index.esm.min.js";
+import { loadingProps as c } from "../composables/loading.js";
+import { autoresizeProps as f } from "../composables/autoresize.js";
 import { merge as o } from "lodash-es";
-import { use as d } from "../node_modules/echarts/lib/extension.js";
-import { install as h } from "../node_modules/echarts/lib/renderer/installCanvasRenderer.js";
-import { install as b } from "../node_modules/echarts/lib/component/dataset/install.js";
+import { use as g } from "../node_modules/echarts/lib/extension.js";
+import { install as d } from "../node_modules/echarts/lib/renderer/installCanvasRenderer.js";
+import { install as h } from "../node_modules/echarts/lib/component/dataset/install.js";
 import { install as O } from "../node_modules/echarts/lib/component/transform/install.js";
-import { install as C } from "../node_modules/echarts/lib/component/title/install.js";
-import { install as $ } from "../node_modules/echarts/lib/component/tooltip/install.js";
-import { install as j } from "../node_modules/echarts/lib/component/legend/install.js";
-const M = /* @__PURE__ */ m({
+import { install as b } from "../node_modules/echarts/lib/component/title/install.js";
+import { install as C } from "../node_modules/echarts/lib/component/tooltip/install.js";
+import { install as $ } from "../node_modules/echarts/lib/component/legend/install.js";
+const K = /* @__PURE__ */ p({
   components: {
-    VChart: c
+    VChart: u
   },
   name: "KsgBaseChart",
   props: {
@@ -24,12 +24,12 @@ const M = /* @__PURE__ */ m({
     updateOptions: Object,
     group: String,
     manualUpdate: Boolean,
-    ...g,
-    ...f
+    ...f,
+    ...c
   },
   setup(t) {
-    d([h, b, O, C, $, j]);
-    const e = p(() => {
+    g([d, h, O, b, C, $]);
+    const e = m(() => {
       const {
         legend: r = {},
         tooltip: i = {}
@@ -42,25 +42,24 @@ const M = /* @__PURE__ */ m({
         confine: !0
       };
       return {
+        autoresize: !0,
+        updateOptions: {
+          notMerge: !0
+        },
         ...t.option,
         legend: o(n, r),
         tooltip: o(l, i)
       };
     });
-    return () => s(a("v-chart"), u({
+    return () => s(a("v-chart"), {
       style: {
         height: "100%",
         width: "100%"
       },
-      "update-options": {
-        notMerge: !0
-      }
-    }, t, {
-      option: e.value,
-      autoresize: !0
-    }), null);
+      option: e.value
+    }, null);
   }
 });
 export {
-  M as default
+  K as default
 };

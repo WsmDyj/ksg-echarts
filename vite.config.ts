@@ -15,7 +15,7 @@ export default defineConfig({
           dir: './dist/es',
           entryFileNames: '[name].js',
           preserveModulesRoot: './packages',
-          preserveModules: true
+          preserveModules: true // 让打包目录和我们目录对应
         },
         {
           format: 'cjs',
@@ -30,7 +30,6 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'packages/index.ts'),
       name: 'ksg-echarts',
-      formats: ['es', 'cjs']
     }
   },
   plugins: [
@@ -40,7 +39,7 @@ export default defineConfig({
       outDir: ['dist/es', 'dist/lib'],
       include: ['packages/**/*.ts'],
       insertTypesEntry: true,
-      staticImport: true,
+      staticImport: true
     })
   ]
 });
