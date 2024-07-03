@@ -1,0 +1,12 @@
+.ksgchart-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.ksgchart-empty-description {
+  color: rgba(0, 0, 0, 0.25);
+  font-size: 14px;
+  margin-top: 6px;
+}

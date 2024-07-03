@@ -5,13 +5,14 @@
 ```vue
 <ksg-pie-chart
   :data="chartData"           // 数据
-  :option="chartoption"       // 图表配置
+  :option="chartoption"       // echarts图表配置
 />
 ```
 
-## 数据
+## 数据集
+> 可以参考 [echarts 数据集 介绍 -> ](https://echarts.apache.org/handbook/zh/concepts/dataset)
 
-`ksg-Echarts` 的数据设计采用数据分析的基础概念，用**维度**和**度量**的组合提供可视化和数据。`ksg-Echarts` 接收的数据格式为数组对象。
+`ksg-Echarts` 的数据设计采用数据分析的基础概念，用**维度**和**度量**的组合提供可视化和数据。`ksg-Echarts` 接收的数据格式为数组对象。内部会初始化并且兼容各种类型的数据
 
 例如：
 

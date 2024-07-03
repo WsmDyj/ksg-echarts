@@ -2,14 +2,12 @@
  * @Author: wusimin 
  * @Date: 2024-06-26 16:16:58
  * @LastEditors: wusimin wusimin@kuaishou.com
- * @LastEditTime: 2024-07-03 05:38:53
+ * @LastEditTime: 2024-07-03 20:08:52
  * @FilePath: /kwaida/packages/kwaida-charts/packages/base/chart.tsx
  * @Description: 基础组件
  */
-import { computed, defineComponent, PropType } from 'vue';
+import { computed, defineComponent, inject, ref, shallowRef } from 'vue';
 import VChart from 'vue-echarts';
-import { InitOptions, Option, Theme, UpdateOptions } from '../types'
-import { loadingProps, autoresizeProps } from '../composables';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import {
@@ -19,65 +17,83 @@ import {
   DatasetComponent,
   TransformComponent
 } from 'echarts/components';
-import { merge } from 'lodash-es';
+import { isArray, isNumber, merge } from 'lodash-es';
 import EmptyData from './emptyData';
-
+import { basicProps } from './props';
+import { unwrapInjected } from '../utils';
+import { PALETTE_KEY } from '.';
+ use([
+   CanvasRenderer,
+   DatasetComponent,
+   TransformComponent,
+   TitleComponent,
+   TooltipComponent,
+   LegendComponent
+ ]);
+export interface KsgBaseChartExpose {
+  getInstance: (typeof VChart)['chart']
+}
 export default defineComponent({
   components: { VChart },
   name: 'KsgBaseChart',
-  props: {
-    option: Object as PropType<Option & { isHasData: Boolean }>,
-    theme: {
-      type: [Object, String] as PropType<Theme>
-    },
-    initOptions: Object as PropType<InitOptions>,
-    updateOptions: Object as PropType<UpdateOptions>,
-    group: String,
-    manualUpdate: Boolean,
-    ...autoresizeProps,
-    ...loadingProps
-  },
-  setup(props, { slots }) {
-    use([
-      CanvasRenderer,
-      DatasetComponent,
-      TransformComponent,
-      TitleComponent,
-      TooltipComponent,
-      LegendComponent
-    ]);
+  inheritAttrs: false,
+  props: basicProps,
+  setup(props, { slots, expose, attrs }) {
+    const isHasData = ref(true);
+    const defaultPalette = inject(PALETTE_KEY, null);
+    const realPalette = computed(() => props.palette || unwrapInjected(defaultPalette, null));
     const option = computed(() => {
-      const { legend = {}, tooltip = {} } = props.option;
+      const { legend = {} } = props.option;
       const legendTemp = {
         type: 'scroll',
         orient: 'horizontal',
         bottom: 'bottom'
       };
-      const tooltipTemp = {
-        trigger: 'item',
-        confine: true
-      };
-      return {
+      isHasData.value = isArray(props.option.dataset)
+        ? true
+        : !!props.option.dataset.source?.length;
+      console.log(realPalette.value);
+      const computedOption = {
         ...props.option,
         legend: merge(legendTemp, legend),
-        tooltip: merge(tooltipTemp, tooltip)
+      };
+      // 设置主题样式表
+      realPalette.value && Reflect.set(computedOption, 'color', realPalette.value);
+      return computedOption;
+    });
+    const instanceRef = shallowRef<InstanceType<typeof VChart>>();
+    const styless = computed(() => {
+      return {
+        height: isNumber(props.height) ? `${props.height}px` : props.height,
+        width: isNumber(props.width) ? `${props.width}px` : props.width
       };
     });
-    return () =>
-      !props.option?.isHasData && !props.loading ? (
-        slots.default ? (
-          slots.default()
+
+    expose({
+      getInstance: () => instanceRef.value?.chart
+    });
+
+    return () => (
+      <div style={styless.value} class="ksgchart">
+        {!isHasData.value && !props.loading ? (
+          slots.default ? (
+            slots.default()
+          ) : (
+            <EmptyData emptyText={props.emptyText} />
+          )
         ) : (
-          <EmptyData />
-        )
-      ) : (
-        <v-chart
-          updateOptions={{ notMerge: true }}
-          {...props}
-          style={{ height: '100%', width: '100%' }}
-          autoresize={props.autoresize}
-          option={option.value}
-        />
-      );
+          <v-chart
+            updateOptions={{ notMerge: true }}
+            {...props}
+            {...attrs}
+            ref={instanceRef}
+            style={{ height: '100%', width: '100%' }}
+            autoresize={props.autoresize}
+            option={option.value}
+            init-options={{ renderer: 'svg' }}
+          />
+        )}
+      </div>
+    );
   }
 });

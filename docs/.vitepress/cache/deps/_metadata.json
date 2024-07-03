@@ -1,68 +1,98 @@
 {
-  "hash": "5f9b6bc5",
-  "browserHash": "22dee0ee",
+  "hash": "819e70be",
+  "browserHash": "4f6490b3",
   "optimized": {
     "vue": {
       "src": "../../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
       "file": "vue.js",
-      "fileHash": "fa6592e7",
-      "needsInterop": false
-    },
-    "vue-echarts": {
-      "src": "../../../../node_modules/vue-echarts/dist/index.esm.min.js",
-      "file": "vue-echarts.js",
-      "fileHash": "2479e7c8",
-      "needsInterop": false
-    },
-    "echarts/core": {
-      "src": "../../../../node_modules/echarts/core.js",
-      "file": "echarts_core.js",
-      "fileHash": "f02a273f",
-      "needsInterop": false
-    },
-    "echarts/renderers": {
-      "src": "../../../../node_modules/echarts/renderers.js",
-      "file": "echarts_renderers.js",
-      "fileHash": "66b61828",
-      "needsInterop": false
-    },
-    "echarts/components": {
-      "src": "../../../../node_modules/echarts/components.js",
-      "file": "echarts_components.js",
-      "fileHash": "10a1b13c",
-      "needsInterop": false
-    },
-    "lodash-es": {
-      "src": "../../../../node_modules/lodash-es/lodash.js",
-      "file": "lodash-es.js",
-      "fileHash": "55688648",
+      "fileHash": "2a039a65",
       "needsInterop": false
     },
     "echarts/charts": {
       "src": "../../../../node_modules/echarts/charts.js",
       "file": "echarts_charts.js",
-      "fileHash": "42bb79c2",
+      "fileHash": "c5dbe5f4",
+      "needsInterop": false
+    },
+    "echarts/core": {
+      "src": "../../../../node_modules/echarts/core.js",
+      "file": "echarts_core.js",
+      "fileHash": "399e73b9",
+      "needsInterop": false
+    },
+    "echarts/components": {
+      "src": "../../../../node_modules/echarts/components.js",
+      "file": "echarts_components.js",
+      "fileHash": "047304f0",
+      "needsInterop": false
+    },
+    "vue-echarts": {
+      "src": "../../../../node_modules/vue-echarts/dist/index.esm.min.js",
+      "file": "vue-echarts.js",
+      "fileHash": "d02e3911",
+      "needsInterop": false
+    },
+    "echarts/renderers": {
+      "src": "../../../../node_modules/echarts/renderers.js",
+      "file": "echarts_renderers.js",
+      "fileHash": "112b6d5c",
+      "needsInterop": false
+    },
+    "lodash-es": {
+      "src": "../../../../node_modules/lodash-es/lodash.js",
+      "file": "lodash-es.js",
+      "fileHash": "857414c6",
+      "needsInterop": false
+    },
+    "zrender/lib/svg/svg": {
+      "src": "../../../../node_modules/zrender/lib/svg/svg.js",
+      "file": "zrender_lib_svg_svg.js",
+      "fileHash": "22515a41",
+      "needsInterop": false
+    },
+    "echarts": {
+      "src": "../../../../node_modules/echarts/index.js",
+      "file": "echarts.js",
+      "fileHash": "9f160314",
       "needsInterop": false
     }
   },
   "chunks": {
+    "chunk-THAB5ASS": {
+      "file": "chunk-THAB5ASS.js"
+    },
+    "chunk-4NHITNJF": {
+      "file": "chunk-4NHITNJF.js"
+    },
+    "chunk-WG47VB4D": {
+      "file": "chunk-WG47VB4D.js"
+    },
     "chunk-MT35GBDY": {
       "file": "chunk-MT35GBDY.js"
     },
-    "chunk-S2E3U2ZI": {
-      "file": "chunk-S2E3U2ZI.js"
+    "chunk-FSXHUHPZ": {
+      "file": "chunk-FSXHUHPZ.js"
     },
-    "chunk-Y6IFNWGW": {
-      "file": "chunk-Y6IFNWGW.js"
+    "chunk-WQKRCNBG": {
+      "file": "chunk-WQKRCNBG.js"
     },
-    "chunk-BS6RHJFP": {
-      "file": "chunk-BS6RHJFP.js"
+    "chunk-JCOMQGE3": {
+      "file": "chunk-JCOMQGE3.js"
     },
-    "chunk-GAETW6KD": {
-      "file": "chunk-GAETW6KD.js"
+    "chunk-P47K2K2W": {
+      "file": "chunk-P47K2K2W.js"
     },
-    "chunk-CDQETP4X": {
-      "file": "chunk-CDQETP4X.js"
+    "chunk-3YH4PDMA": {
+      "file": "chunk-3YH4PDMA.js"
+    },
+    "chunk-JD6ZJ5NI": {
+      "file": "chunk-JD6ZJ5NI.js"
+    },
+    "chunk-FVPX7YXV": {
+      "file": "chunk-FVPX7YXV.js"
+    },
+    "chunk-ESTDIZVI": {
+      "file": "chunk-ESTDIZVI.js"
     },
     "chunk-SSYGV25P": {
       "file": "chunk-SSYGV25P.js"

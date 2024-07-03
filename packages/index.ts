@@ -1,5 +1,8 @@
-
 import type { App } from 'vue';
+import './index.css'
+
+export * from './base';
+export * from './types';
 
 import KsgBaseChart from './base';
 import KsgBarChart from './bar';

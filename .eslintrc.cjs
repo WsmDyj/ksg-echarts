@@ -1,8 +1,8 @@
 /*
  * @Author: wusimin 
  * @Date: 2024-06-26 15:05:56
- * @LastEditors: wusimin 
- * @LastEditTime: 2024-06-26 15:05:58
+ * @LastEditors: wusimin wusimin@kuaishou.com
+ * @LastEditTime: 2024-07-03 10:00:59
  * @FilePath: /kwaida/packages/kwaida-charts/.eslintrc.cjs
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -21,6 +21,7 @@ module.exports = {
     ecmaVersion: 'latest'
   },
   rules: {
-    'vue/multi-word-component-names': 'off'
+    'vue/multi-word-component-names': 'off',
+    'vue/no-side-effects-in-computed-properties': 'off'
   }
 };

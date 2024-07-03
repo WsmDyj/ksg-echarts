@@ -1,19 +1,18 @@
 <template>
-  <ksg-line-chart :loading-options="loadingOptions" loading :data="chartData" />
+   <ksg-pie-chart :palette="palette"  :data="chartData" />
 </template>
-<script setup>
-import { reactive, ref } from 'vue';
+<script setup lang="ts">
+import { ref, provide } from 'vue';
 const chartData = ref([
-  { week: 'Mon', pv: 30, },
-  { week: 'Tue', pv: 40 },
-  { week: 'Wed', pv: 35 },
-  { week: 'Thu', pv: 50 },
-  { week: 'Fir', pv: 49 },
-  { week: 'Sat', pv: 70 },
-  { week: 'Sun', pv: 90 }
+  { Repo: 'Vue.js', star: 40000, },
+  { Repo: 'React', star: 27800 },
+  { Repo: 'Create RA', star: 22500 },
+  { Repo: 'Puppteer', star: 22000 },
+  { Repo: 'Axios', star: 21900 },
+  { Repo: 'Prettier', star: 14800 },
+  { Repo: 'VS Code', star: 20200 },
+  { Repo: 'RN', star: 17700 },
+  { Repo: 'Element', star: 15600 },
+  { Repo: 'Electron', star: 14900 },
 ]);
-const loadingOptions = reactive({
-  color: '#c23531',
-})
-
 </script>

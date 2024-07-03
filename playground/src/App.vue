@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { provide } from 'vue'
 import Pie from './components/pie.vue'
+import { PALETTE_KEY } from '../../packages'
+const palette = ['#FF6B3B', '#626681', ]
+provide(PALETTE_KEY, palette)
 </script>
 
 <template>

@@ -43,8 +43,7 @@ export default defineConfig({
   },
 
   themeConfig: {
-    outline: false,
-    // outlineTitle: '本页目录',
+    outlineTitle: '本页目录',
     lastUpdatedText: '上次更新',
     logo: '/logo.svg',
     search: {
@@ -95,6 +94,24 @@ export default defineConfig({
           ]
         },
         {
+          text: '🌴 通用配置',
+          collapsible: false,
+          items: [
+            {
+              text: '属性配置',
+              link: '/guide/other/attrs'
+            },
+            {
+              text: '事件处理',
+              link: '/guide/other/event'
+            },
+            {
+              text: '图表主题',
+              link: '/guide/other/theme'
+            },
+          ]
+        },
+        {
           text: '📈 图表',
           collapsible: false,
           items: [
@@ -112,16 +129,7 @@ export default defineConfig({
             },
           ]
         },
-        {
-          text: '🌴 其他',
-          collapsible: false,
-          items: [
-            {
-              text: '属性配置',
-              link: '/guide/other/attrs'
-            },
-          ]
-        }
+        
       ],
     },
 

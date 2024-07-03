@@ -15,10 +15,16 @@ export default defineComponent({
   props: {
     data: Array as PropType<KsgChartsData>
   },
-  setup(props, {slots}) {
-    const mergedOption = useWatchChartData(LineComputed, props);
-    console.log(mergedOption.value);
-
-    return () => <KsgBaseChart v-slots={slots} {...props} option={mergedOption} />;
+  setup(props, { slots, expose, attrs }) {
+    const [mergedOption, ksgBaseChartRef] = useWatchChartData(LineComputed, props, expose);
+    return () => (
+      <KsgBaseChart
+        {...attrs}
+        ref={ksgBaseChartRef}
+        v-slots={slots}
+        {...props}
+        option={mergedOption.value}
+      />
+    );
   }
 });

@@ -1,3 +1,4 @@
+import "./chunk-FSXHUHPZ.js";
 import {
   extendChartView,
   extendComponentModel,
@@ -9,8 +10,8 @@ import {
   number_exports,
   time_exports,
   util_exports as util_exports2
-} from "./chunk-S2E3U2ZI.js";
-import "./chunk-Y6IFNWGW.js";
+} from "./chunk-WQKRCNBG.js";
+import "./chunk-JCOMQGE3.js";
 import {
   Axis_default,
   Chart_default,
@@ -50,9 +51,11 @@ import {
   throttle,
   use,
   version
-} from "./chunk-GAETW6KD.js";
+} from "./chunk-P47K2K2W.js";
 import {
-  brushSingle,
+  brushSingle
+} from "./chunk-JD6ZJ5NI.js";
+import {
   color_exports,
   env_default,
   matrix_exports,
@@ -60,7 +63,7 @@ import {
   util_exports,
   vector_exports,
   zrender_exports
-} from "./chunk-CDQETP4X.js";
+} from "./chunk-ESTDIZVI.js";
 import "./chunk-SSYGV25P.js";
 export {
   Axis_default as Axis,

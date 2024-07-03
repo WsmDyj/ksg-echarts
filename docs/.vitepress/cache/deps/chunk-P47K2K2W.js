@@ -1,4 +1,7 @@
 import {
+  brushSingle
+} from "./chunk-JD6ZJ5NI.js";
+import {
   BoundingRect_default,
   CompoundPath_default,
   Displayable_default,
@@ -17,7 +20,6 @@ import {
   applyTransform,
   assert,
   bind,
-  brushSingle,
   calculateTextPosition,
   clone,
   clone2,
@@ -83,7 +85,7 @@ import {
   subPixelOptimizeRect,
   trim,
   windingLine
-} from "./chunk-CDQETP4X.js";
+} from "./chunk-ESTDIZVI.js";
 import {
   __export
 } from "./chunk-SSYGV25P.js";
@@ -2117,6 +2119,29 @@ function mergePath(pathEls, opts) {
   };
   return pathBundle;
 }
+function clonePath(sourcePath, opts) {
+  opts = opts || {};
+  var path = new Path_default();
+  if (sourcePath.shape) {
+    path.setShape(sourcePath.shape);
+  }
+  path.setStyle(sourcePath.style);
+  if (opts.bakeTransform) {
+    transformPath(path.path, sourcePath.getComputedTransform());
+  } else {
+    if (opts.toLocal) {
+      path.setLocalTransform(sourcePath.getComputedTransform());
+    } else {
+      path.copyTransform(sourcePath);
+    }
+  }
+  path.buildPath = sourcePath.buildPath;
+  path.applyTransform = path.applyTransform;
+  path.z = sourcePath.z;
+  path.z2 = sourcePath.z2;
+  path.zlevel = sourcePath.zlevel;
+  return path;
+}
 
 // ../node_modules/zrender/lib/graphic/shape/Circle.js
 var CircleShape = function() {
@@ -3221,6 +3246,9 @@ function removeElementWithFadeOut(el, animatableModel, dataIndex) {
 }
 function saveOldStyle(el) {
   transitionStore(el).oldStyle = el.style;
+}
+function getOldStyle(el) {
+  return transitionStore(el).oldStyle;
 }
 
 // ../node_modules/echarts/lib/util/graphic.js
@@ -13600,6 +13628,66 @@ registerTheme("light", light_default);
 registerTheme("dark", dark_default);
 var dataTool = {};
 
+// ../node_modules/echarts/lib/extension.js
+var extensions = [];
+var extensionRegisters = {
+  registerPreprocessor,
+  registerProcessor,
+  registerPostInit,
+  registerPostUpdate,
+  registerUpdateLifecycle,
+  registerAction,
+  registerCoordinateSystem,
+  registerLayout,
+  registerVisual,
+  registerTransform,
+  registerLoading,
+  registerMap,
+  registerImpl,
+  PRIORITY,
+  ComponentModel: Component_default,
+  ComponentView: Component_default2,
+  SeriesModel: Series_default,
+  ChartView: Chart_default,
+  // TODO Use ComponentModel and SeriesModel instead of Constructor
+  registerComponentModel: function(ComponentModelClass) {
+    Component_default.registerClass(ComponentModelClass);
+  },
+  registerComponentView: function(ComponentViewClass) {
+    Component_default2.registerClass(ComponentViewClass);
+  },
+  registerSeriesModel: function(SeriesModelClass) {
+    Series_default.registerClass(SeriesModelClass);
+  },
+  registerChartView: function(ChartViewClass) {
+    Chart_default.registerClass(ChartViewClass);
+  },
+  registerSubTypeDefaulter: function(componentType, defaulter) {
+    Component_default.registerSubTypeDefaulter(componentType, defaulter);
+  },
+  registerPainter: function(painterType, PainterCtor) {
+    registerPainter(painterType, PainterCtor);
+  }
+};
+function use(ext) {
+  if (isArray(ext)) {
+    each(ext, function(singleExt) {
+      use(singleExt);
+    });
+    return;
+  }
+  if (indexOf(extensions, ext) >= 0) {
+    return;
+  }
+  extensions.push(ext);
+  if (isFunction(ext)) {
+    ext = {
+      install: ext
+    };
+  }
+  ext.install(extensionRegisters);
+}
+
 // ../node_modules/echarts/lib/data/DataDiffer.js
 function dataIndexMapValueLength(valNumOrArrLengthMoreThan2) {
   return valNumOrArrLengthMoreThan2 == null ? 0 : valNumOrArrLengthMoreThan2.length || 1;
@@ -14661,66 +14749,6 @@ var SeriesData = (
   }()
 );
 var SeriesData_default = SeriesData;
-
-// ../node_modules/echarts/lib/extension.js
-var extensions = [];
-var extensionRegisters = {
-  registerPreprocessor,
-  registerProcessor,
-  registerPostInit,
-  registerPostUpdate,
-  registerUpdateLifecycle,
-  registerAction,
-  registerCoordinateSystem,
-  registerLayout,
-  registerVisual,
-  registerTransform,
-  registerLoading,
-  registerMap,
-  registerImpl,
-  PRIORITY,
-  ComponentModel: Component_default,
-  ComponentView: Component_default2,
-  SeriesModel: Series_default,
-  ChartView: Chart_default,
-  // TODO Use ComponentModel and SeriesModel instead of Constructor
-  registerComponentModel: function(ComponentModelClass) {
-    Component_default.registerClass(ComponentModelClass);
-  },
-  registerComponentView: function(ComponentViewClass) {
-    Component_default2.registerClass(ComponentViewClass);
-  },
-  registerSeriesModel: function(SeriesModelClass) {
-    Series_default.registerClass(SeriesModelClass);
-  },
-  registerChartView: function(ChartViewClass) {
-    Chart_default.registerClass(ChartViewClass);
-  },
-  registerSubTypeDefaulter: function(componentType, defaulter) {
-    Component_default.registerSubTypeDefaulter(componentType, defaulter);
-  },
-  registerPainter: function(painterType, PainterCtor) {
-    registerPainter(painterType, PainterCtor);
-  }
-};
-function use(ext) {
-  if (isArray(ext)) {
-    each(ext, function(singleExt) {
-      use(singleExt);
-    });
-    return;
-  }
-  if (indexOf(extensions, ext) >= 0) {
-    return;
-  }
-  extensions.push(ext);
-  if (isFunction(ext)) {
-    ext = {
-      install: ext
-    };
-  }
-  ext.install(extensionRegisters);
-}
 
 // ../node_modules/zrender/lib/contain/polygon.js
 var EPSILON = 1e-8;
@@ -17598,6 +17626,7 @@ export {
   isHighDownDispatcher,
   enableComponentHighDownFeatures,
   createFromString,
+  clonePath,
   Circle_default,
   Ellipse_default,
   Sector_default,
@@ -17617,6 +17646,7 @@ export {
   removeElement,
   removeElementWithFadeOut,
   saveOldStyle,
+  getOldStyle,
   extendShape,
   extendPath,
   registerShape,
@@ -17704,6 +17734,7 @@ export {
   getPaddingFromTooltipModel,
   TooltipMarkupStyleCreator,
   defaultSeriesFormatTooltip,
+  SERIES_UNIVERSAL_TRANSITION_PROP,
   Series_default,
   Component_default2,
   createRenderPlanner,
@@ -17748,6 +17779,7 @@ export {
   getMap,
   registerTransform,
   dataTool,
+  use,
   DataDiffer_default,
   getDimensionTypeByAxis,
   SeriesDimensionDefine_default,
@@ -17781,7 +17813,6 @@ export {
   getDataDimensionsOnAxis,
   unionAxisExtentFromData,
   AxisModelCommonMixin,
-  use,
   contain,
   GeoJSONRegion,
   GeoSVGRegion,
@@ -17792,4 +17823,4 @@ export {
   shiftLayoutOnY,
   hideOverlap
 };
-//# sourceMappingURL=chunk-GAETW6KD.js.map
+//# sourceMappingURL=chunk-P47K2K2W.js.map

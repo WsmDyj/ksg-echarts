@@ -1,7 +1,7 @@
 
 /*
  * @Date: 2024-06-26 17:07:36
- * @LastEditTime: 2024-07-02 19:09:15
+ * @LastEditTime: 2024-07-03 20:08:35
  * @Description: 统一数据格式
  */
 import { Option, KsgChartsData, KsgChartsProps, ChartCommonOption } from '../../types';
@@ -51,11 +51,20 @@ export default class PieComputed {
     });
     return series;
   }
+
+  getPieTooltip() {
+    return {
+      trigger: 'item',
+      confine: true
+    };
+  }
+
   getChartOption() {
     const option = merge(
       {
         dataset: this.getPieDataset(),
-        series: this.getPieSeries()
+        series: this.getPieSeries(),
+        tooltip: this.getPieTooltip()
       },
       this.option
     );
