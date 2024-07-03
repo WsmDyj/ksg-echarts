@@ -17,9 +17,9 @@ npm i ksg-echarts echarts -S
 
 ```js
 import Vue from 'vue'
-import KsgCharts from 'ksg-echarts'
+import KsgEcharts from 'ksg-echarts'
 
-Vue.use(KsgCharts)
+Vue.use(KsgEcharts)
 ```
 
 按需引入 `ksg-echarts`

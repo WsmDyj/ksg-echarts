@@ -1,12 +1,17 @@
-import { merge as e } from "lodash-es";
-import { ref as n, watchEffect as c } from "vue";
-function m(r, t) {
-  const o = n();
-  return c(() => {
-    const a = new r(t).getChartOption();
-    o.value = e(a, t.option);
-  }), o;
+import { merge as s } from "lodash-es";
+import { ref as h, shallowRef as f, watchEffect as i } from "vue";
+function p(o, e, r) {
+  const a = h(), n = f();
+  return i(() => {
+    const c = new o(e).getChartOption();
+    a.value = s(c, e.option);
+  }), r({
+    getInstance: () => {
+      var t;
+      return (t = n.value) == null ? void 0 : t.getInstance();
+    }
+  }), [a, n];
 }
 export {
-  m as useWatchChartData
+  p as useWatchChartData
 };

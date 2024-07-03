@@ -1,12 +1,9 @@
 import { App } from 'vue';
-import { WithInstall, KsgChartsData, AnyRecord } from './types';
+import { Injection, WithInstall } from './types';
 
 export declare const withInstall: <T>(comp: T) => T & {
     install(app: App<any>): void;
 } & Plugin;
-export declare const getDataset: (data: KsgChartsData, settings?: AnyRecord, options?: any) => {
-    dimensions: any[];
-    source: {
-        [x: string]: (string | number | (string | number)[])[];
-    };
+export declare function unwrapInjected<T, V>(injection: Injection<T>, defaultValue: V): T | V | {
+    value: T;
 };

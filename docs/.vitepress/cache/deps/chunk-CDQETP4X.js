@@ -7161,495 +7161,6 @@ function registerSSRDataGetter(getter) {
 }
 var version = "5.6.0";
 
-// ../node_modules/zrender/lib/graphic/helper/image.js
-var globalImageCache = new LRU_default(50);
-function findExistImage(newImageOrSrc) {
-  if (typeof newImageOrSrc === "string") {
-    var cachedImgObj = globalImageCache.get(newImageOrSrc);
-    return cachedImgObj && cachedImgObj.image;
-  } else {
-    return newImageOrSrc;
-  }
-}
-function createOrUpdateImage(newImageOrSrc, image, hostEl, onload, cbPayload) {
-  if (!newImageOrSrc) {
-    return image;
-  } else if (typeof newImageOrSrc === "string") {
-    if (image && image.__zrImageSrc === newImageOrSrc || !hostEl) {
-      return image;
-    }
-    var cachedImgObj = globalImageCache.get(newImageOrSrc);
-    var pendingWrap = { hostEl, cb: onload, cbPayload };
-    if (cachedImgObj) {
-      image = cachedImgObj.image;
-      !isImageReady(image) && cachedImgObj.pending.push(pendingWrap);
-    } else {
-      image = platformApi.loadImage(newImageOrSrc, imageOnLoad, imageOnLoad);
-      image.__zrImageSrc = newImageOrSrc;
-      globalImageCache.put(newImageOrSrc, image.__cachedImgObj = {
-        image,
-        pending: [pendingWrap]
-      });
-    }
-    return image;
-  } else {
-    return newImageOrSrc;
-  }
-}
-function imageOnLoad() {
-  var cachedImgObj = this.__cachedImgObj;
-  this.onload = this.onerror = this.__cachedImgObj = null;
-  for (var i = 0; i < cachedImgObj.pending.length; i++) {
-    var pendingWrap = cachedImgObj.pending[i];
-    var cb = pendingWrap.cb;
-    cb && cb(this, pendingWrap.cbPayload);
-    pendingWrap.hostEl.dirty();
-  }
-  cachedImgObj.pending.length = 0;
-}
-function isImageReady(image) {
-  return image && image.width && image.height;
-}
-
-// ../node_modules/zrender/lib/graphic/helper/parseText.js
-var STYLE_REG = /\{([a-zA-Z0-9_]+)\|([^}]*)\}/g;
-function truncateText(text, containerWidth, font, ellipsis, options) {
-  if (!containerWidth) {
-    return "";
-  }
-  var textLines = (text + "").split("\n");
-  options = prepareTruncateOptions(containerWidth, font, ellipsis, options);
-  for (var i = 0, len2 = textLines.length; i < len2; i++) {
-    textLines[i] = truncateSingleLine(textLines[i], options);
-  }
-  return textLines.join("\n");
-}
-function prepareTruncateOptions(containerWidth, font, ellipsis, options) {
-  options = options || {};
-  var preparedOpts = extend({}, options);
-  preparedOpts.font = font;
-  ellipsis = retrieve2(ellipsis, "...");
-  preparedOpts.maxIterations = retrieve2(options.maxIterations, 2);
-  var minChar = preparedOpts.minChar = retrieve2(options.minChar, 0);
-  preparedOpts.cnCharWidth = getWidth("国", font);
-  var ascCharWidth = preparedOpts.ascCharWidth = getWidth("a", font);
-  preparedOpts.placeholder = retrieve2(options.placeholder, "");
-  var contentWidth = containerWidth = Math.max(0, containerWidth - 1);
-  for (var i = 0; i < minChar && contentWidth >= ascCharWidth; i++) {
-    contentWidth -= ascCharWidth;
-  }
-  var ellipsisWidth = getWidth(ellipsis, font);
-  if (ellipsisWidth > contentWidth) {
-    ellipsis = "";
-    ellipsisWidth = 0;
-  }
-  contentWidth = containerWidth - ellipsisWidth;
-  preparedOpts.ellipsis = ellipsis;
-  preparedOpts.ellipsisWidth = ellipsisWidth;
-  preparedOpts.contentWidth = contentWidth;
-  preparedOpts.containerWidth = containerWidth;
-  return preparedOpts;
-}
-function truncateSingleLine(textLine, options) {
-  var containerWidth = options.containerWidth;
-  var font = options.font;
-  var contentWidth = options.contentWidth;
-  if (!containerWidth) {
-    return "";
-  }
-  var lineWidth = getWidth(textLine, font);
-  if (lineWidth <= containerWidth) {
-    return textLine;
-  }
-  for (var j = 0; ; j++) {
-    if (lineWidth <= contentWidth || j >= options.maxIterations) {
-      textLine += options.ellipsis;
-      break;
-    }
-    var subLength = j === 0 ? estimateLength(textLine, contentWidth, options.ascCharWidth, options.cnCharWidth) : lineWidth > 0 ? Math.floor(textLine.length * contentWidth / lineWidth) : 0;
-    textLine = textLine.substr(0, subLength);
-    lineWidth = getWidth(textLine, font);
-  }
-  if (textLine === "") {
-    textLine = options.placeholder;
-  }
-  return textLine;
-}
-function estimateLength(text, contentWidth, ascCharWidth, cnCharWidth) {
-  var width = 0;
-  var i = 0;
-  for (var len2 = text.length; i < len2 && width < contentWidth; i++) {
-    var charCode = text.charCodeAt(i);
-    width += 0 <= charCode && charCode <= 127 ? ascCharWidth : cnCharWidth;
-  }
-  return i;
-}
-function parsePlainText(text, style) {
-  text != null && (text += "");
-  var overflow = style.overflow;
-  var padding = style.padding;
-  var font = style.font;
-  var truncate = overflow === "truncate";
-  var calculatedLineHeight = getLineHeight(font);
-  var lineHeight = retrieve2(style.lineHeight, calculatedLineHeight);
-  var bgColorDrawn = !!style.backgroundColor;
-  var truncateLineOverflow = style.lineOverflow === "truncate";
-  var width = style.width;
-  var lines;
-  if (width != null && (overflow === "break" || overflow === "breakAll")) {
-    lines = text ? wrapText(text, style.font, width, overflow === "breakAll", 0).lines : [];
-  } else {
-    lines = text ? text.split("\n") : [];
-  }
-  var contentHeight = lines.length * lineHeight;
-  var height = retrieve2(style.height, contentHeight);
-  if (contentHeight > height && truncateLineOverflow) {
-    var lineCount = Math.floor(height / lineHeight);
-    lines = lines.slice(0, lineCount);
-  }
-  if (text && truncate && width != null) {
-    var options = prepareTruncateOptions(width, font, style.ellipsis, {
-      minChar: style.truncateMinChar,
-      placeholder: style.placeholder
-    });
-    for (var i = 0; i < lines.length; i++) {
-      lines[i] = truncateSingleLine(lines[i], options);
-    }
-  }
-  var outerHeight = height;
-  var contentWidth = 0;
-  for (var i = 0; i < lines.length; i++) {
-    contentWidth = Math.max(getWidth(lines[i], font), contentWidth);
-  }
-  if (width == null) {
-    width = contentWidth;
-  }
-  var outerWidth = contentWidth;
-  if (padding) {
-    outerHeight += padding[0] + padding[2];
-    outerWidth += padding[1] + padding[3];
-    width += padding[1] + padding[3];
-  }
-  if (bgColorDrawn) {
-    outerWidth = width;
-  }
-  return {
-    lines,
-    height,
-    outerWidth,
-    outerHeight,
-    lineHeight,
-    calculatedLineHeight,
-    contentWidth,
-    contentHeight,
-    width
-  };
-}
-var RichTextToken = function() {
-  function RichTextToken2() {
-  }
-  return RichTextToken2;
-}();
-var RichTextLine = function() {
-  function RichTextLine2(tokens) {
-    this.tokens = [];
-    if (tokens) {
-      this.tokens = tokens;
-    }
-  }
-  return RichTextLine2;
-}();
-var RichTextContentBlock = function() {
-  function RichTextContentBlock2() {
-    this.width = 0;
-    this.height = 0;
-    this.contentWidth = 0;
-    this.contentHeight = 0;
-    this.outerWidth = 0;
-    this.outerHeight = 0;
-    this.lines = [];
-  }
-  return RichTextContentBlock2;
-}();
-function parseRichText(text, style) {
-  var contentBlock = new RichTextContentBlock();
-  text != null && (text += "");
-  if (!text) {
-    return contentBlock;
-  }
-  var topWidth = style.width;
-  var topHeight = style.height;
-  var overflow = style.overflow;
-  var wrapInfo = (overflow === "break" || overflow === "breakAll") && topWidth != null ? { width: topWidth, accumWidth: 0, breakAll: overflow === "breakAll" } : null;
-  var lastIndex = STYLE_REG.lastIndex = 0;
-  var result;
-  while ((result = STYLE_REG.exec(text)) != null) {
-    var matchedIndex = result.index;
-    if (matchedIndex > lastIndex) {
-      pushTokens(contentBlock, text.substring(lastIndex, matchedIndex), style, wrapInfo);
-    }
-    pushTokens(contentBlock, result[2], style, wrapInfo, result[1]);
-    lastIndex = STYLE_REG.lastIndex;
-  }
-  if (lastIndex < text.length) {
-    pushTokens(contentBlock, text.substring(lastIndex, text.length), style, wrapInfo);
-  }
-  var pendingList = [];
-  var calculatedHeight = 0;
-  var calculatedWidth = 0;
-  var stlPadding = style.padding;
-  var truncate = overflow === "truncate";
-  var truncateLine = style.lineOverflow === "truncate";
-  function finishLine(line2, lineWidth2, lineHeight2) {
-    line2.width = lineWidth2;
-    line2.lineHeight = lineHeight2;
-    calculatedHeight += lineHeight2;
-    calculatedWidth = Math.max(calculatedWidth, lineWidth2);
-  }
-  outer:
-    for (var i = 0; i < contentBlock.lines.length; i++) {
-      var line = contentBlock.lines[i];
-      var lineHeight = 0;
-      var lineWidth = 0;
-      for (var j = 0; j < line.tokens.length; j++) {
-        var token = line.tokens[j];
-        var tokenStyle = token.styleName && style.rich[token.styleName] || {};
-        var textPadding = token.textPadding = tokenStyle.padding;
-        var paddingH = textPadding ? textPadding[1] + textPadding[3] : 0;
-        var font = token.font = tokenStyle.font || style.font;
-        token.contentHeight = getLineHeight(font);
-        var tokenHeight = retrieve2(tokenStyle.height, token.contentHeight);
-        token.innerHeight = tokenHeight;
-        textPadding && (tokenHeight += textPadding[0] + textPadding[2]);
-        token.height = tokenHeight;
-        token.lineHeight = retrieve3(tokenStyle.lineHeight, style.lineHeight, tokenHeight);
-        token.align = tokenStyle && tokenStyle.align || style.align;
-        token.verticalAlign = tokenStyle && tokenStyle.verticalAlign || "middle";
-        if (truncateLine && topHeight != null && calculatedHeight + token.lineHeight > topHeight) {
-          if (j > 0) {
-            line.tokens = line.tokens.slice(0, j);
-            finishLine(line, lineWidth, lineHeight);
-            contentBlock.lines = contentBlock.lines.slice(0, i + 1);
-          } else {
-            contentBlock.lines = contentBlock.lines.slice(0, i);
-          }
-          break outer;
-        }
-        var styleTokenWidth = tokenStyle.width;
-        var tokenWidthNotSpecified = styleTokenWidth == null || styleTokenWidth === "auto";
-        if (typeof styleTokenWidth === "string" && styleTokenWidth.charAt(styleTokenWidth.length - 1) === "%") {
-          token.percentWidth = styleTokenWidth;
-          pendingList.push(token);
-          token.contentWidth = getWidth(token.text, font);
-        } else {
-          if (tokenWidthNotSpecified) {
-            var textBackgroundColor = tokenStyle.backgroundColor;
-            var bgImg = textBackgroundColor && textBackgroundColor.image;
-            if (bgImg) {
-              bgImg = findExistImage(bgImg);
-              if (isImageReady(bgImg)) {
-                token.width = Math.max(token.width, bgImg.width * tokenHeight / bgImg.height);
-              }
-            }
-          }
-          var remainTruncWidth = truncate && topWidth != null ? topWidth - lineWidth : null;
-          if (remainTruncWidth != null && remainTruncWidth < token.width) {
-            if (!tokenWidthNotSpecified || remainTruncWidth < paddingH) {
-              token.text = "";
-              token.width = token.contentWidth = 0;
-            } else {
-              token.text = truncateText(token.text, remainTruncWidth - paddingH, font, style.ellipsis, { minChar: style.truncateMinChar });
-              token.width = token.contentWidth = getWidth(token.text, font);
-            }
-          } else {
-            token.contentWidth = getWidth(token.text, font);
-          }
-        }
-        token.width += paddingH;
-        lineWidth += token.width;
-        tokenStyle && (lineHeight = Math.max(lineHeight, token.lineHeight));
-      }
-      finishLine(line, lineWidth, lineHeight);
-    }
-  contentBlock.outerWidth = contentBlock.width = retrieve2(topWidth, calculatedWidth);
-  contentBlock.outerHeight = contentBlock.height = retrieve2(topHeight, calculatedHeight);
-  contentBlock.contentHeight = calculatedHeight;
-  contentBlock.contentWidth = calculatedWidth;
-  if (stlPadding) {
-    contentBlock.outerWidth += stlPadding[1] + stlPadding[3];
-    contentBlock.outerHeight += stlPadding[0] + stlPadding[2];
-  }
-  for (var i = 0; i < pendingList.length; i++) {
-    var token = pendingList[i];
-    var percentWidth = token.percentWidth;
-    token.width = parseInt(percentWidth, 10) / 100 * contentBlock.width;
-  }
-  return contentBlock;
-}
-function pushTokens(block, str, style, wrapInfo, styleName) {
-  var isEmptyStr = str === "";
-  var tokenStyle = styleName && style.rich[styleName] || {};
-  var lines = block.lines;
-  var font = tokenStyle.font || style.font;
-  var newLine = false;
-  var strLines;
-  var linesWidths;
-  if (wrapInfo) {
-    var tokenPadding = tokenStyle.padding;
-    var tokenPaddingH = tokenPadding ? tokenPadding[1] + tokenPadding[3] : 0;
-    if (tokenStyle.width != null && tokenStyle.width !== "auto") {
-      var outerWidth_1 = parsePercent(tokenStyle.width, wrapInfo.width) + tokenPaddingH;
-      if (lines.length > 0) {
-        if (outerWidth_1 + wrapInfo.accumWidth > wrapInfo.width) {
-          strLines = str.split("\n");
-          newLine = true;
-        }
-      }
-      wrapInfo.accumWidth = outerWidth_1;
-    } else {
-      var res = wrapText(str, font, wrapInfo.width, wrapInfo.breakAll, wrapInfo.accumWidth);
-      wrapInfo.accumWidth = res.accumWidth + tokenPaddingH;
-      linesWidths = res.linesWidths;
-      strLines = res.lines;
-    }
-  } else {
-    strLines = str.split("\n");
-  }
-  for (var i = 0; i < strLines.length; i++) {
-    var text = strLines[i];
-    var token = new RichTextToken();
-    token.styleName = styleName;
-    token.text = text;
-    token.isLineHolder = !text && !isEmptyStr;
-    if (typeof tokenStyle.width === "number") {
-      token.width = tokenStyle.width;
-    } else {
-      token.width = linesWidths ? linesWidths[i] : getWidth(text, font);
-    }
-    if (!i && !newLine) {
-      var tokens = (lines[lines.length - 1] || (lines[0] = new RichTextLine())).tokens;
-      var tokensLen = tokens.length;
-      tokensLen === 1 && tokens[0].isLineHolder ? tokens[0] = token : (text || !tokensLen || isEmptyStr) && tokens.push(token);
-    } else {
-      lines.push(new RichTextLine([token]));
-    }
-  }
-}
-function isAlphabeticLetter(ch) {
-  var code = ch.charCodeAt(0);
-  return code >= 32 && code <= 591 || code >= 880 && code <= 4351 || code >= 4608 && code <= 5119 || code >= 7680 && code <= 8303;
-}
-var breakCharMap = reduce(",&?/;] ".split(""), function(obj, ch) {
-  obj[ch] = true;
-  return obj;
-}, {});
-function isWordBreakChar(ch) {
-  if (isAlphabeticLetter(ch)) {
-    if (breakCharMap[ch]) {
-      return true;
-    }
-    return false;
-  }
-  return true;
-}
-function wrapText(text, font, lineWidth, isBreakAll, lastAccumWidth) {
-  var lines = [];
-  var linesWidths = [];
-  var line = "";
-  var currentWord = "";
-  var currentWordWidth = 0;
-  var accumWidth = 0;
-  for (var i = 0; i < text.length; i++) {
-    var ch = text.charAt(i);
-    if (ch === "\n") {
-      if (currentWord) {
-        line += currentWord;
-        accumWidth += currentWordWidth;
-      }
-      lines.push(line);
-      linesWidths.push(accumWidth);
-      line = "";
-      currentWord = "";
-      currentWordWidth = 0;
-      accumWidth = 0;
-      continue;
-    }
-    var chWidth = getWidth(ch, font);
-    var inWord = isBreakAll ? false : !isWordBreakChar(ch);
-    if (!lines.length ? lastAccumWidth + accumWidth + chWidth > lineWidth : accumWidth + chWidth > lineWidth) {
-      if (!accumWidth) {
-        if (inWord) {
-          lines.push(currentWord);
-          linesWidths.push(currentWordWidth);
-          currentWord = ch;
-          currentWordWidth = chWidth;
-        } else {
-          lines.push(ch);
-          linesWidths.push(chWidth);
-        }
-      } else if (line || currentWord) {
-        if (inWord) {
-          if (!line) {
-            line = currentWord;
-            currentWord = "";
-            currentWordWidth = 0;
-            accumWidth = currentWordWidth;
-          }
-          lines.push(line);
-          linesWidths.push(accumWidth - currentWordWidth);
-          currentWord += ch;
-          currentWordWidth += chWidth;
-          line = "";
-          accumWidth = currentWordWidth;
-        } else {
-          if (currentWord) {
-            line += currentWord;
-            currentWord = "";
-            currentWordWidth = 0;
-          }
-          lines.push(line);
-          linesWidths.push(accumWidth);
-          line = ch;
-          accumWidth = chWidth;
-        }
-      }
-      continue;
-    }
-    accumWidth += chWidth;
-    if (inWord) {
-      currentWord += ch;
-      currentWordWidth += chWidth;
-    } else {
-      if (currentWord) {
-        line += currentWord;
-        currentWord = "";
-        currentWordWidth = 0;
-      }
-      line += ch;
-    }
-  }
-  if (!lines.length && !line) {
-    line = text;
-    currentWord = "";
-    currentWordWidth = 0;
-  }
-  if (currentWord) {
-    line += currentWord;
-  }
-  if (line) {
-    lines.push(line);
-    linesWidths.push(accumWidth);
-  }
-  if (lines.length === 1) {
-    accumWidth += lastAccumWidth;
-  }
-  return {
-    accumWidth,
-    lines,
-    linesWidths
-  };
-}
-
 // ../node_modules/zrender/lib/graphic/Displayable.js
 var STYLE_MAGIC_KEY = "__zr_style_" + Math.round(Math.random() * 10);
 var DEFAULT_COMMON_STYLE = {
@@ -8768,6 +8279,133 @@ var PathProxy = function() {
 }();
 var PathProxy_default = PathProxy;
 
+// ../node_modules/zrender/lib/graphic/helper/image.js
+var globalImageCache = new LRU_default(50);
+function findExistImage(newImageOrSrc) {
+  if (typeof newImageOrSrc === "string") {
+    var cachedImgObj = globalImageCache.get(newImageOrSrc);
+    return cachedImgObj && cachedImgObj.image;
+  } else {
+    return newImageOrSrc;
+  }
+}
+function createOrUpdateImage(newImageOrSrc, image, hostEl, onload, cbPayload) {
+  if (!newImageOrSrc) {
+    return image;
+  } else if (typeof newImageOrSrc === "string") {
+    if (image && image.__zrImageSrc === newImageOrSrc || !hostEl) {
+      return image;
+    }
+    var cachedImgObj = globalImageCache.get(newImageOrSrc);
+    var pendingWrap = { hostEl, cb: onload, cbPayload };
+    if (cachedImgObj) {
+      image = cachedImgObj.image;
+      !isImageReady(image) && cachedImgObj.pending.push(pendingWrap);
+    } else {
+      image = platformApi.loadImage(newImageOrSrc, imageOnLoad, imageOnLoad);
+      image.__zrImageSrc = newImageOrSrc;
+      globalImageCache.put(newImageOrSrc, image.__cachedImgObj = {
+        image,
+        pending: [pendingWrap]
+      });
+    }
+    return image;
+  } else {
+    return newImageOrSrc;
+  }
+}
+function imageOnLoad() {
+  var cachedImgObj = this.__cachedImgObj;
+  this.onload = this.onerror = this.__cachedImgObj = null;
+  for (var i = 0; i < cachedImgObj.pending.length; i++) {
+    var pendingWrap = cachedImgObj.pending[i];
+    var cb = pendingWrap.cb;
+    cb && cb(this, pendingWrap.cbPayload);
+    pendingWrap.hostEl.dirty();
+  }
+  cachedImgObj.pending.length = 0;
+}
+function isImageReady(image) {
+  return image && image.width && image.height;
+}
+
+// ../node_modules/zrender/lib/canvas/helper.js
+function isSafeNum(num) {
+  return isFinite(num);
+}
+function createLinearGradient(ctx, obj, rect) {
+  var x = obj.x == null ? 0 : obj.x;
+  var x2 = obj.x2 == null ? 1 : obj.x2;
+  var y = obj.y == null ? 0 : obj.y;
+  var y2 = obj.y2 == null ? 0 : obj.y2;
+  if (!obj.global) {
+    x = x * rect.width + rect.x;
+    x2 = x2 * rect.width + rect.x;
+    y = y * rect.height + rect.y;
+    y2 = y2 * rect.height + rect.y;
+  }
+  x = isSafeNum(x) ? x : 0;
+  x2 = isSafeNum(x2) ? x2 : 1;
+  y = isSafeNum(y) ? y : 0;
+  y2 = isSafeNum(y2) ? y2 : 0;
+  var canvasGradient = ctx.createLinearGradient(x, y, x2, y2);
+  return canvasGradient;
+}
+function createRadialGradient(ctx, obj, rect) {
+  var width = rect.width;
+  var height = rect.height;
+  var min3 = Math.min(width, height);
+  var x = obj.x == null ? 0.5 : obj.x;
+  var y = obj.y == null ? 0.5 : obj.y;
+  var r = obj.r == null ? 0.5 : obj.r;
+  if (!obj.global) {
+    x = x * width + rect.x;
+    y = y * height + rect.y;
+    r = r * min3;
+  }
+  x = isSafeNum(x) ? x : 0.5;
+  y = isSafeNum(y) ? y : 0.5;
+  r = r >= 0 && isSafeNum(r) ? r : 0.5;
+  var canvasGradient = ctx.createRadialGradient(x, y, 0, x, y, r);
+  return canvasGradient;
+}
+function getCanvasGradient(ctx, obj, rect) {
+  var canvasGradient = obj.type === "radial" ? createRadialGradient(ctx, obj, rect) : createLinearGradient(ctx, obj, rect);
+  var colorStops = obj.colorStops;
+  for (var i = 0; i < colorStops.length; i++) {
+    canvasGradient.addColorStop(colorStops[i].offset, colorStops[i].color);
+  }
+  return canvasGradient;
+}
+function isClipPathChanged(clipPaths, prevClipPaths) {
+  if (clipPaths === prevClipPaths || !clipPaths && !prevClipPaths) {
+    return false;
+  }
+  if (!clipPaths || !prevClipPaths || clipPaths.length !== prevClipPaths.length) {
+    return true;
+  }
+  for (var i = 0; i < clipPaths.length; i++) {
+    if (clipPaths[i] !== prevClipPaths[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+function parseInt10(val) {
+  return parseInt(val, 10);
+}
+function getSize(root, whIdx, opts) {
+  var wh = ["width", "height"][whIdx];
+  var cwh = ["clientWidth", "clientHeight"][whIdx];
+  var plt = ["paddingLeft", "paddingTop"][whIdx];
+  var prb = ["paddingRight", "paddingBottom"][whIdx];
+  if (opts[wh] != null && opts[wh] !== "auto") {
+    return parseFloat(opts[wh]);
+  }
+  var stl = document.defaultView.getComputedStyle(root);
+  return (root[cwh] || parseInt10(stl[wh]) || parseInt10(root.style[wh])) - (parseInt10(stl[plt]) || 0) - (parseInt10(stl[prb]) || 0) | 0;
+}
+
 // ../node_modules/zrender/lib/contain/line.js
 function containStroke(x0, y0, x1, y1, lineWidth, x, y) {
   if (lineWidth === 0) {
@@ -9539,65 +9177,6 @@ var Path = function(_super) {
 }(Displayable_default);
 var Path_default = Path;
 
-// ../node_modules/zrender/lib/graphic/TSpan.js
-var DEFAULT_TSPAN_STYLE = defaults({
-  strokeFirst: true,
-  font: DEFAULT_FONT,
-  x: 0,
-  y: 0,
-  textAlign: "left",
-  textBaseline: "top",
-  miterLimit: 2
-}, DEFAULT_PATH_STYLE);
-var TSpan = function(_super) {
-  __extends(TSpan2, _super);
-  function TSpan2() {
-    return _super !== null && _super.apply(this, arguments) || this;
-  }
-  TSpan2.prototype.hasStroke = function() {
-    var style = this.style;
-    var stroke = style.stroke;
-    return stroke != null && stroke !== "none" && style.lineWidth > 0;
-  };
-  TSpan2.prototype.hasFill = function() {
-    var style = this.style;
-    var fill = style.fill;
-    return fill != null && fill !== "none";
-  };
-  TSpan2.prototype.createStyle = function(obj) {
-    return createObject(DEFAULT_TSPAN_STYLE, obj);
-  };
-  TSpan2.prototype.setBoundingRect = function(rect) {
-    this._rect = rect;
-  };
-  TSpan2.prototype.getBoundingRect = function() {
-    var style = this.style;
-    if (!this._rect) {
-      var text = style.text;
-      text != null ? text += "" : text = "";
-      var rect = getBoundingRect(text, style.font, style.textAlign, style.textBaseline);
-      rect.x += style.x || 0;
-      rect.y += style.y || 0;
-      if (this.hasStroke()) {
-        var w = style.lineWidth;
-        rect.x -= w / 2;
-        rect.y -= w / 2;
-        rect.width += w;
-        rect.height += w;
-      }
-      this._rect = rect;
-    }
-    return this._rect;
-  };
-  TSpan2.initDefaultProps = function() {
-    var tspanProto = TSpan2.prototype;
-    tspanProto.dirtyRectTolerance = 10;
-  }();
-  return TSpan2;
-}(Displayable_default);
-TSpan.prototype.type = "tspan";
-var TSpan_default = TSpan;
-
 // ../node_modules/zrender/lib/graphic/Image.js
 var DEFAULT_IMAGE_STYLE = defaults({
   x: 0,
@@ -9664,6 +9243,1034 @@ var ZRImage = function(_super) {
 }(Displayable_default);
 ZRImage.prototype.type = "image";
 var Image_default = ZRImage;
+
+// ../node_modules/zrender/lib/graphic/TSpan.js
+var DEFAULT_TSPAN_STYLE = defaults({
+  strokeFirst: true,
+  font: DEFAULT_FONT,
+  x: 0,
+  y: 0,
+  textAlign: "left",
+  textBaseline: "top",
+  miterLimit: 2
+}, DEFAULT_PATH_STYLE);
+var TSpan = function(_super) {
+  __extends(TSpan2, _super);
+  function TSpan2() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+  TSpan2.prototype.hasStroke = function() {
+    var style = this.style;
+    var stroke = style.stroke;
+    return stroke != null && stroke !== "none" && style.lineWidth > 0;
+  };
+  TSpan2.prototype.hasFill = function() {
+    var style = this.style;
+    var fill = style.fill;
+    return fill != null && fill !== "none";
+  };
+  TSpan2.prototype.createStyle = function(obj) {
+    return createObject(DEFAULT_TSPAN_STYLE, obj);
+  };
+  TSpan2.prototype.setBoundingRect = function(rect) {
+    this._rect = rect;
+  };
+  TSpan2.prototype.getBoundingRect = function() {
+    var style = this.style;
+    if (!this._rect) {
+      var text = style.text;
+      text != null ? text += "" : text = "";
+      var rect = getBoundingRect(text, style.font, style.textAlign, style.textBaseline);
+      rect.x += style.x || 0;
+      rect.y += style.y || 0;
+      if (this.hasStroke()) {
+        var w = style.lineWidth;
+        rect.x -= w / 2;
+        rect.y -= w / 2;
+        rect.width += w;
+        rect.height += w;
+      }
+      this._rect = rect;
+    }
+    return this._rect;
+  };
+  TSpan2.initDefaultProps = function() {
+    var tspanProto = TSpan2.prototype;
+    tspanProto.dirtyRectTolerance = 10;
+  }();
+  return TSpan2;
+}(Displayable_default);
+TSpan.prototype.type = "tspan";
+var TSpan_default = TSpan;
+
+// ../node_modules/zrender/lib/canvas/dashStyle.js
+function normalizeLineDash(lineType, lineWidth) {
+  if (!lineType || lineType === "solid" || !(lineWidth > 0)) {
+    return null;
+  }
+  return lineType === "dashed" ? [4 * lineWidth, 2 * lineWidth] : lineType === "dotted" ? [lineWidth] : isNumber(lineType) ? [lineType] : isArray(lineType) ? lineType : null;
+}
+function getLineDash(el) {
+  var style = el.style;
+  var lineDash = style.lineDash && style.lineWidth > 0 && normalizeLineDash(style.lineDash, style.lineWidth);
+  var lineDashOffset = style.lineDashOffset;
+  if (lineDash) {
+    var lineScale_1 = style.strokeNoScale && el.getLineScale ? el.getLineScale() : 1;
+    if (lineScale_1 && lineScale_1 !== 1) {
+      lineDash = map(lineDash, function(rawVal) {
+        return rawVal / lineScale_1;
+      });
+      lineDashOffset /= lineScale_1;
+    }
+  }
+  return [lineDash, lineDashOffset];
+}
+
+// ../node_modules/zrender/lib/canvas/graphic.js
+var pathProxyForDraw = new PathProxy_default(true);
+function styleHasStroke(style) {
+  var stroke = style.stroke;
+  return !(stroke == null || stroke === "none" || !(style.lineWidth > 0));
+}
+function isValidStrokeFillStyle(strokeOrFill) {
+  return typeof strokeOrFill === "string" && strokeOrFill !== "none";
+}
+function styleHasFill(style) {
+  var fill = style.fill;
+  return fill != null && fill !== "none";
+}
+function doFillPath(ctx, style) {
+  if (style.fillOpacity != null && style.fillOpacity !== 1) {
+    var originalGlobalAlpha = ctx.globalAlpha;
+    ctx.globalAlpha = style.fillOpacity * style.opacity;
+    ctx.fill();
+    ctx.globalAlpha = originalGlobalAlpha;
+  } else {
+    ctx.fill();
+  }
+}
+function doStrokePath(ctx, style) {
+  if (style.strokeOpacity != null && style.strokeOpacity !== 1) {
+    var originalGlobalAlpha = ctx.globalAlpha;
+    ctx.globalAlpha = style.strokeOpacity * style.opacity;
+    ctx.stroke();
+    ctx.globalAlpha = originalGlobalAlpha;
+  } else {
+    ctx.stroke();
+  }
+}
+function createCanvasPattern(ctx, pattern, el) {
+  var image = createOrUpdateImage(pattern.image, pattern.__image, el);
+  if (isImageReady(image)) {
+    var canvasPattern = ctx.createPattern(image, pattern.repeat || "repeat");
+    if (typeof DOMMatrix === "function" && canvasPattern && canvasPattern.setTransform) {
+      var matrix = new DOMMatrix();
+      matrix.translateSelf(pattern.x || 0, pattern.y || 0);
+      matrix.rotateSelf(0, 0, (pattern.rotation || 0) * RADIAN_TO_DEGREE);
+      matrix.scaleSelf(pattern.scaleX || 1, pattern.scaleY || 1);
+      canvasPattern.setTransform(matrix);
+    }
+    return canvasPattern;
+  }
+}
+function brushPath(ctx, el, style, inBatch) {
+  var _a;
+  var hasStroke = styleHasStroke(style);
+  var hasFill = styleHasFill(style);
+  var strokePercent = style.strokePercent;
+  var strokePart = strokePercent < 1;
+  var firstDraw = !el.path;
+  if ((!el.silent || strokePart) && firstDraw) {
+    el.createPathProxy();
+  }
+  var path = el.path || pathProxyForDraw;
+  var dirtyFlag = el.__dirty;
+  if (!inBatch) {
+    var fill = style.fill;
+    var stroke = style.stroke;
+    var hasFillGradient = hasFill && !!fill.colorStops;
+    var hasStrokeGradient = hasStroke && !!stroke.colorStops;
+    var hasFillPattern = hasFill && !!fill.image;
+    var hasStrokePattern = hasStroke && !!stroke.image;
+    var fillGradient = void 0;
+    var strokeGradient = void 0;
+    var fillPattern = void 0;
+    var strokePattern = void 0;
+    var rect = void 0;
+    if (hasFillGradient || hasStrokeGradient) {
+      rect = el.getBoundingRect();
+    }
+    if (hasFillGradient) {
+      fillGradient = dirtyFlag ? getCanvasGradient(ctx, fill, rect) : el.__canvasFillGradient;
+      el.__canvasFillGradient = fillGradient;
+    }
+    if (hasStrokeGradient) {
+      strokeGradient = dirtyFlag ? getCanvasGradient(ctx, stroke, rect) : el.__canvasStrokeGradient;
+      el.__canvasStrokeGradient = strokeGradient;
+    }
+    if (hasFillPattern) {
+      fillPattern = dirtyFlag || !el.__canvasFillPattern ? createCanvasPattern(ctx, fill, el) : el.__canvasFillPattern;
+      el.__canvasFillPattern = fillPattern;
+    }
+    if (hasStrokePattern) {
+      strokePattern = dirtyFlag || !el.__canvasStrokePattern ? createCanvasPattern(ctx, stroke, el) : el.__canvasStrokePattern;
+      el.__canvasStrokePattern = fillPattern;
+    }
+    if (hasFillGradient) {
+      ctx.fillStyle = fillGradient;
+    } else if (hasFillPattern) {
+      if (fillPattern) {
+        ctx.fillStyle = fillPattern;
+      } else {
+        hasFill = false;
+      }
+    }
+    if (hasStrokeGradient) {
+      ctx.strokeStyle = strokeGradient;
+    } else if (hasStrokePattern) {
+      if (strokePattern) {
+        ctx.strokeStyle = strokePattern;
+      } else {
+        hasStroke = false;
+      }
+    }
+  }
+  var scale3 = el.getGlobalScale();
+  path.setScale(scale3[0], scale3[1], el.segmentIgnoreThreshold);
+  var lineDash;
+  var lineDashOffset;
+  if (ctx.setLineDash && style.lineDash) {
+    _a = getLineDash(el), lineDash = _a[0], lineDashOffset = _a[1];
+  }
+  var needsRebuild = true;
+  if (firstDraw || dirtyFlag & SHAPE_CHANGED_BIT) {
+    path.setDPR(ctx.dpr);
+    if (strokePart) {
+      path.setContext(null);
+    } else {
+      path.setContext(ctx);
+      needsRebuild = false;
+    }
+    path.reset();
+    el.buildPath(path, el.shape, inBatch);
+    path.toStatic();
+    el.pathUpdated();
+  }
+  if (needsRebuild) {
+    path.rebuildPath(ctx, strokePart ? strokePercent : 1);
+  }
+  if (lineDash) {
+    ctx.setLineDash(lineDash);
+    ctx.lineDashOffset = lineDashOffset;
+  }
+  if (!inBatch) {
+    if (style.strokeFirst) {
+      if (hasStroke) {
+        doStrokePath(ctx, style);
+      }
+      if (hasFill) {
+        doFillPath(ctx, style);
+      }
+    } else {
+      if (hasFill) {
+        doFillPath(ctx, style);
+      }
+      if (hasStroke) {
+        doStrokePath(ctx, style);
+      }
+    }
+  }
+  if (lineDash) {
+    ctx.setLineDash([]);
+  }
+}
+function brushImage(ctx, el, style) {
+  var image = el.__image = createOrUpdateImage(style.image, el.__image, el, el.onload);
+  if (!image || !isImageReady(image)) {
+    return;
+  }
+  var x = style.x || 0;
+  var y = style.y || 0;
+  var width = el.getWidth();
+  var height = el.getHeight();
+  var aspect = image.width / image.height;
+  if (width == null && height != null) {
+    width = height * aspect;
+  } else if (height == null && width != null) {
+    height = width / aspect;
+  } else if (width == null && height == null) {
+    width = image.width;
+    height = image.height;
+  }
+  if (style.sWidth && style.sHeight) {
+    var sx = style.sx || 0;
+    var sy = style.sy || 0;
+    ctx.drawImage(image, sx, sy, style.sWidth, style.sHeight, x, y, width, height);
+  } else if (style.sx && style.sy) {
+    var sx = style.sx;
+    var sy = style.sy;
+    var sWidth = width - sx;
+    var sHeight = height - sy;
+    ctx.drawImage(image, sx, sy, sWidth, sHeight, x, y, width, height);
+  } else {
+    ctx.drawImage(image, x, y, width, height);
+  }
+}
+function brushText(ctx, el, style) {
+  var _a;
+  var text = style.text;
+  text != null && (text += "");
+  if (text) {
+    ctx.font = style.font || DEFAULT_FONT;
+    ctx.textAlign = style.textAlign;
+    ctx.textBaseline = style.textBaseline;
+    var lineDash = void 0;
+    var lineDashOffset = void 0;
+    if (ctx.setLineDash && style.lineDash) {
+      _a = getLineDash(el), lineDash = _a[0], lineDashOffset = _a[1];
+    }
+    if (lineDash) {
+      ctx.setLineDash(lineDash);
+      ctx.lineDashOffset = lineDashOffset;
+    }
+    if (style.strokeFirst) {
+      if (styleHasStroke(style)) {
+        ctx.strokeText(text, style.x, style.y);
+      }
+      if (styleHasFill(style)) {
+        ctx.fillText(text, style.x, style.y);
+      }
+    } else {
+      if (styleHasFill(style)) {
+        ctx.fillText(text, style.x, style.y);
+      }
+      if (styleHasStroke(style)) {
+        ctx.strokeText(text, style.x, style.y);
+      }
+    }
+    if (lineDash) {
+      ctx.setLineDash([]);
+    }
+  }
+}
+var SHADOW_NUMBER_PROPS = ["shadowBlur", "shadowOffsetX", "shadowOffsetY"];
+var STROKE_PROPS = [
+  ["lineCap", "butt"],
+  ["lineJoin", "miter"],
+  ["miterLimit", 10]
+];
+function bindCommonProps(ctx, style, prevStyle, forceSetAll, scope) {
+  var styleChanged = false;
+  if (!forceSetAll) {
+    prevStyle = prevStyle || {};
+    if (style === prevStyle) {
+      return false;
+    }
+  }
+  if (forceSetAll || style.opacity !== prevStyle.opacity) {
+    flushPathDrawn(ctx, scope);
+    styleChanged = true;
+    var opacity = Math.max(Math.min(style.opacity, 1), 0);
+    ctx.globalAlpha = isNaN(opacity) ? DEFAULT_COMMON_STYLE.opacity : opacity;
+  }
+  if (forceSetAll || style.blend !== prevStyle.blend) {
+    if (!styleChanged) {
+      flushPathDrawn(ctx, scope);
+      styleChanged = true;
+    }
+    ctx.globalCompositeOperation = style.blend || DEFAULT_COMMON_STYLE.blend;
+  }
+  for (var i = 0; i < SHADOW_NUMBER_PROPS.length; i++) {
+    var propName = SHADOW_NUMBER_PROPS[i];
+    if (forceSetAll || style[propName] !== prevStyle[propName]) {
+      if (!styleChanged) {
+        flushPathDrawn(ctx, scope);
+        styleChanged = true;
+      }
+      ctx[propName] = ctx.dpr * (style[propName] || 0);
+    }
+  }
+  if (forceSetAll || style.shadowColor !== prevStyle.shadowColor) {
+    if (!styleChanged) {
+      flushPathDrawn(ctx, scope);
+      styleChanged = true;
+    }
+    ctx.shadowColor = style.shadowColor || DEFAULT_COMMON_STYLE.shadowColor;
+  }
+  return styleChanged;
+}
+function bindPathAndTextCommonStyle(ctx, el, prevEl, forceSetAll, scope) {
+  var style = getStyle(el, scope.inHover);
+  var prevStyle = forceSetAll ? null : prevEl && getStyle(prevEl, scope.inHover) || {};
+  if (style === prevStyle) {
+    return false;
+  }
+  var styleChanged = bindCommonProps(ctx, style, prevStyle, forceSetAll, scope);
+  if (forceSetAll || style.fill !== prevStyle.fill) {
+    if (!styleChanged) {
+      flushPathDrawn(ctx, scope);
+      styleChanged = true;
+    }
+    isValidStrokeFillStyle(style.fill) && (ctx.fillStyle = style.fill);
+  }
+  if (forceSetAll || style.stroke !== prevStyle.stroke) {
+    if (!styleChanged) {
+      flushPathDrawn(ctx, scope);
+      styleChanged = true;
+    }
+    isValidStrokeFillStyle(style.stroke) && (ctx.strokeStyle = style.stroke);
+  }
+  if (forceSetAll || style.opacity !== prevStyle.opacity) {
+    if (!styleChanged) {
+      flushPathDrawn(ctx, scope);
+      styleChanged = true;
+    }
+    ctx.globalAlpha = style.opacity == null ? 1 : style.opacity;
+  }
+  if (el.hasStroke()) {
+    var lineWidth = style.lineWidth;
+    var newLineWidth = lineWidth / (style.strokeNoScale && el.getLineScale ? el.getLineScale() : 1);
+    if (ctx.lineWidth !== newLineWidth) {
+      if (!styleChanged) {
+        flushPathDrawn(ctx, scope);
+        styleChanged = true;
+      }
+      ctx.lineWidth = newLineWidth;
+    }
+  }
+  for (var i = 0; i < STROKE_PROPS.length; i++) {
+    var prop = STROKE_PROPS[i];
+    var propName = prop[0];
+    if (forceSetAll || style[propName] !== prevStyle[propName]) {
+      if (!styleChanged) {
+        flushPathDrawn(ctx, scope);
+        styleChanged = true;
+      }
+      ctx[propName] = style[propName] || prop[1];
+    }
+  }
+  return styleChanged;
+}
+function bindImageStyle(ctx, el, prevEl, forceSetAll, scope) {
+  return bindCommonProps(ctx, getStyle(el, scope.inHover), prevEl && getStyle(prevEl, scope.inHover), forceSetAll, scope);
+}
+function setContextTransform(ctx, el) {
+  var m = el.transform;
+  var dpr2 = ctx.dpr || 1;
+  if (m) {
+    ctx.setTransform(dpr2 * m[0], dpr2 * m[1], dpr2 * m[2], dpr2 * m[3], dpr2 * m[4], dpr2 * m[5]);
+  } else {
+    ctx.setTransform(dpr2, 0, 0, dpr2, 0, 0);
+  }
+}
+function updateClipStatus(clipPaths, ctx, scope) {
+  var allClipped = false;
+  for (var i = 0; i < clipPaths.length; i++) {
+    var clipPath = clipPaths[i];
+    allClipped = allClipped || clipPath.isZeroArea();
+    setContextTransform(ctx, clipPath);
+    ctx.beginPath();
+    clipPath.buildPath(ctx, clipPath.shape);
+    ctx.clip();
+  }
+  scope.allClipped = allClipped;
+}
+function isTransformChanged(m0, m1) {
+  if (m0 && m1) {
+    return m0[0] !== m1[0] || m0[1] !== m1[1] || m0[2] !== m1[2] || m0[3] !== m1[3] || m0[4] !== m1[4] || m0[5] !== m1[5];
+  } else if (!m0 && !m1) {
+    return false;
+  }
+  return true;
+}
+var DRAW_TYPE_PATH = 1;
+var DRAW_TYPE_IMAGE = 2;
+var DRAW_TYPE_TEXT = 3;
+var DRAW_TYPE_INCREMENTAL = 4;
+function canPathBatch(style) {
+  var hasFill = styleHasFill(style);
+  var hasStroke = styleHasStroke(style);
+  return !(style.lineDash || !(+hasFill ^ +hasStroke) || hasFill && typeof style.fill !== "string" || hasStroke && typeof style.stroke !== "string" || style.strokePercent < 1 || style.strokeOpacity < 1 || style.fillOpacity < 1);
+}
+function flushPathDrawn(ctx, scope) {
+  scope.batchFill && ctx.fill();
+  scope.batchStroke && ctx.stroke();
+  scope.batchFill = "";
+  scope.batchStroke = "";
+}
+function getStyle(el, inHover) {
+  return inHover ? el.__hoverStyle || el.style : el.style;
+}
+function brushSingle(ctx, el) {
+  brush(ctx, el, { inHover: false, viewWidth: 0, viewHeight: 0 }, true);
+}
+function brush(ctx, el, scope, isLast) {
+  var m = el.transform;
+  if (!el.shouldBePainted(scope.viewWidth, scope.viewHeight, false, false)) {
+    el.__dirty &= ~REDRAW_BIT;
+    el.__isRendered = false;
+    return;
+  }
+  var clipPaths = el.__clipPaths;
+  var prevElClipPaths = scope.prevElClipPaths;
+  var forceSetTransform = false;
+  var forceSetStyle = false;
+  if (!prevElClipPaths || isClipPathChanged(clipPaths, prevElClipPaths)) {
+    if (prevElClipPaths && prevElClipPaths.length) {
+      flushPathDrawn(ctx, scope);
+      ctx.restore();
+      forceSetStyle = forceSetTransform = true;
+      scope.prevElClipPaths = null;
+      scope.allClipped = false;
+      scope.prevEl = null;
+    }
+    if (clipPaths && clipPaths.length) {
+      flushPathDrawn(ctx, scope);
+      ctx.save();
+      updateClipStatus(clipPaths, ctx, scope);
+      forceSetTransform = true;
+    }
+    scope.prevElClipPaths = clipPaths;
+  }
+  if (scope.allClipped) {
+    el.__isRendered = false;
+    return;
+  }
+  el.beforeBrush && el.beforeBrush();
+  el.innerBeforeBrush();
+  var prevEl = scope.prevEl;
+  if (!prevEl) {
+    forceSetStyle = forceSetTransform = true;
+  }
+  var canBatchPath = el instanceof Path_default && el.autoBatch && canPathBatch(el.style);
+  if (forceSetTransform || isTransformChanged(m, prevEl.transform)) {
+    flushPathDrawn(ctx, scope);
+    setContextTransform(ctx, el);
+  } else if (!canBatchPath) {
+    flushPathDrawn(ctx, scope);
+  }
+  var style = getStyle(el, scope.inHover);
+  if (el instanceof Path_default) {
+    if (scope.lastDrawType !== DRAW_TYPE_PATH) {
+      forceSetStyle = true;
+      scope.lastDrawType = DRAW_TYPE_PATH;
+    }
+    bindPathAndTextCommonStyle(ctx, el, prevEl, forceSetStyle, scope);
+    if (!canBatchPath || !scope.batchFill && !scope.batchStroke) {
+      ctx.beginPath();
+    }
+    brushPath(ctx, el, style, canBatchPath);
+    if (canBatchPath) {
+      scope.batchFill = style.fill || "";
+      scope.batchStroke = style.stroke || "";
+    }
+  } else {
+    if (el instanceof TSpan_default) {
+      if (scope.lastDrawType !== DRAW_TYPE_TEXT) {
+        forceSetStyle = true;
+        scope.lastDrawType = DRAW_TYPE_TEXT;
+      }
+      bindPathAndTextCommonStyle(ctx, el, prevEl, forceSetStyle, scope);
+      brushText(ctx, el, style);
+    } else if (el instanceof Image_default) {
+      if (scope.lastDrawType !== DRAW_TYPE_IMAGE) {
+        forceSetStyle = true;
+        scope.lastDrawType = DRAW_TYPE_IMAGE;
+      }
+      bindImageStyle(ctx, el, prevEl, forceSetStyle, scope);
+      brushImage(ctx, el, style);
+    } else if (el.getTemporalDisplayables) {
+      if (scope.lastDrawType !== DRAW_TYPE_INCREMENTAL) {
+        forceSetStyle = true;
+        scope.lastDrawType = DRAW_TYPE_INCREMENTAL;
+      }
+      brushIncremental(ctx, el, scope);
+    }
+  }
+  if (canBatchPath && isLast) {
+    flushPathDrawn(ctx, scope);
+  }
+  el.innerAfterBrush();
+  el.afterBrush && el.afterBrush();
+  scope.prevEl = el;
+  el.__dirty = 0;
+  el.__isRendered = true;
+}
+function brushIncremental(ctx, el, scope) {
+  var displayables = el.getDisplayables();
+  var temporalDisplayables = el.getTemporalDisplayables();
+  ctx.save();
+  var innerScope = {
+    prevElClipPaths: null,
+    prevEl: null,
+    allClipped: false,
+    viewWidth: scope.viewWidth,
+    viewHeight: scope.viewHeight,
+    inHover: scope.inHover
+  };
+  var i;
+  var len2;
+  for (i = el.getCursor(), len2 = displayables.length; i < len2; i++) {
+    var displayable = displayables[i];
+    displayable.beforeBrush && displayable.beforeBrush();
+    displayable.innerBeforeBrush();
+    brush(ctx, displayable, innerScope, i === len2 - 1);
+    displayable.innerAfterBrush();
+    displayable.afterBrush && displayable.afterBrush();
+    innerScope.prevEl = displayable;
+  }
+  for (var i_1 = 0, len_1 = temporalDisplayables.length; i_1 < len_1; i_1++) {
+    var displayable = temporalDisplayables[i_1];
+    displayable.beforeBrush && displayable.beforeBrush();
+    displayable.innerBeforeBrush();
+    brush(ctx, displayable, innerScope, i_1 === len_1 - 1);
+    displayable.innerAfterBrush();
+    displayable.afterBrush && displayable.afterBrush();
+    innerScope.prevEl = displayable;
+  }
+  el.clearTemporalDisplayables();
+  el.notClear = true;
+  ctx.restore();
+}
+
+// ../node_modules/zrender/lib/graphic/helper/parseText.js
+var STYLE_REG = /\{([a-zA-Z0-9_]+)\|([^}]*)\}/g;
+function truncateText(text, containerWidth, font, ellipsis, options) {
+  if (!containerWidth) {
+    return "";
+  }
+  var textLines = (text + "").split("\n");
+  options = prepareTruncateOptions(containerWidth, font, ellipsis, options);
+  for (var i = 0, len2 = textLines.length; i < len2; i++) {
+    textLines[i] = truncateSingleLine(textLines[i], options);
+  }
+  return textLines.join("\n");
+}
+function prepareTruncateOptions(containerWidth, font, ellipsis, options) {
+  options = options || {};
+  var preparedOpts = extend({}, options);
+  preparedOpts.font = font;
+  ellipsis = retrieve2(ellipsis, "...");
+  preparedOpts.maxIterations = retrieve2(options.maxIterations, 2);
+  var minChar = preparedOpts.minChar = retrieve2(options.minChar, 0);
+  preparedOpts.cnCharWidth = getWidth("国", font);
+  var ascCharWidth = preparedOpts.ascCharWidth = getWidth("a", font);
+  preparedOpts.placeholder = retrieve2(options.placeholder, "");
+  var contentWidth = containerWidth = Math.max(0, containerWidth - 1);
+  for (var i = 0; i < minChar && contentWidth >= ascCharWidth; i++) {
+    contentWidth -= ascCharWidth;
+  }
+  var ellipsisWidth = getWidth(ellipsis, font);
+  if (ellipsisWidth > contentWidth) {
+    ellipsis = "";
+    ellipsisWidth = 0;
+  }
+  contentWidth = containerWidth - ellipsisWidth;
+  preparedOpts.ellipsis = ellipsis;
+  preparedOpts.ellipsisWidth = ellipsisWidth;
+  preparedOpts.contentWidth = contentWidth;
+  preparedOpts.containerWidth = containerWidth;
+  return preparedOpts;
+}
+function truncateSingleLine(textLine, options) {
+  var containerWidth = options.containerWidth;
+  var font = options.font;
+  var contentWidth = options.contentWidth;
+  if (!containerWidth) {
+    return "";
+  }
+  var lineWidth = getWidth(textLine, font);
+  if (lineWidth <= containerWidth) {
+    return textLine;
+  }
+  for (var j = 0; ; j++) {
+    if (lineWidth <= contentWidth || j >= options.maxIterations) {
+      textLine += options.ellipsis;
+      break;
+    }
+    var subLength = j === 0 ? estimateLength(textLine, contentWidth, options.ascCharWidth, options.cnCharWidth) : lineWidth > 0 ? Math.floor(textLine.length * contentWidth / lineWidth) : 0;
+    textLine = textLine.substr(0, subLength);
+    lineWidth = getWidth(textLine, font);
+  }
+  if (textLine === "") {
+    textLine = options.placeholder;
+  }
+  return textLine;
+}
+function estimateLength(text, contentWidth, ascCharWidth, cnCharWidth) {
+  var width = 0;
+  var i = 0;
+  for (var len2 = text.length; i < len2 && width < contentWidth; i++) {
+    var charCode = text.charCodeAt(i);
+    width += 0 <= charCode && charCode <= 127 ? ascCharWidth : cnCharWidth;
+  }
+  return i;
+}
+function parsePlainText(text, style) {
+  text != null && (text += "");
+  var overflow = style.overflow;
+  var padding = style.padding;
+  var font = style.font;
+  var truncate = overflow === "truncate";
+  var calculatedLineHeight = getLineHeight(font);
+  var lineHeight = retrieve2(style.lineHeight, calculatedLineHeight);
+  var bgColorDrawn = !!style.backgroundColor;
+  var truncateLineOverflow = style.lineOverflow === "truncate";
+  var width = style.width;
+  var lines;
+  if (width != null && (overflow === "break" || overflow === "breakAll")) {
+    lines = text ? wrapText(text, style.font, width, overflow === "breakAll", 0).lines : [];
+  } else {
+    lines = text ? text.split("\n") : [];
+  }
+  var contentHeight = lines.length * lineHeight;
+  var height = retrieve2(style.height, contentHeight);
+  if (contentHeight > height && truncateLineOverflow) {
+    var lineCount = Math.floor(height / lineHeight);
+    lines = lines.slice(0, lineCount);
+  }
+  if (text && truncate && width != null) {
+    var options = prepareTruncateOptions(width, font, style.ellipsis, {
+      minChar: style.truncateMinChar,
+      placeholder: style.placeholder
+    });
+    for (var i = 0; i < lines.length; i++) {
+      lines[i] = truncateSingleLine(lines[i], options);
+    }
+  }
+  var outerHeight = height;
+  var contentWidth = 0;
+  for (var i = 0; i < lines.length; i++) {
+    contentWidth = Math.max(getWidth(lines[i], font), contentWidth);
+  }
+  if (width == null) {
+    width = contentWidth;
+  }
+  var outerWidth = contentWidth;
+  if (padding) {
+    outerHeight += padding[0] + padding[2];
+    outerWidth += padding[1] + padding[3];
+    width += padding[1] + padding[3];
+  }
+  if (bgColorDrawn) {
+    outerWidth = width;
+  }
+  return {
+    lines,
+    height,
+    outerWidth,
+    outerHeight,
+    lineHeight,
+    calculatedLineHeight,
+    contentWidth,
+    contentHeight,
+    width
+  };
+}
+var RichTextToken = function() {
+  function RichTextToken2() {
+  }
+  return RichTextToken2;
+}();
+var RichTextLine = function() {
+  function RichTextLine2(tokens) {
+    this.tokens = [];
+    if (tokens) {
+      this.tokens = tokens;
+    }
+  }
+  return RichTextLine2;
+}();
+var RichTextContentBlock = function() {
+  function RichTextContentBlock2() {
+    this.width = 0;
+    this.height = 0;
+    this.contentWidth = 0;
+    this.contentHeight = 0;
+    this.outerWidth = 0;
+    this.outerHeight = 0;
+    this.lines = [];
+  }
+  return RichTextContentBlock2;
+}();
+function parseRichText(text, style) {
+  var contentBlock = new RichTextContentBlock();
+  text != null && (text += "");
+  if (!text) {
+    return contentBlock;
+  }
+  var topWidth = style.width;
+  var topHeight = style.height;
+  var overflow = style.overflow;
+  var wrapInfo = (overflow === "break" || overflow === "breakAll") && topWidth != null ? { width: topWidth, accumWidth: 0, breakAll: overflow === "breakAll" } : null;
+  var lastIndex = STYLE_REG.lastIndex = 0;
+  var result;
+  while ((result = STYLE_REG.exec(text)) != null) {
+    var matchedIndex = result.index;
+    if (matchedIndex > lastIndex) {
+      pushTokens(contentBlock, text.substring(lastIndex, matchedIndex), style, wrapInfo);
+    }
+    pushTokens(contentBlock, result[2], style, wrapInfo, result[1]);
+    lastIndex = STYLE_REG.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    pushTokens(contentBlock, text.substring(lastIndex, text.length), style, wrapInfo);
+  }
+  var pendingList = [];
+  var calculatedHeight = 0;
+  var calculatedWidth = 0;
+  var stlPadding = style.padding;
+  var truncate = overflow === "truncate";
+  var truncateLine = style.lineOverflow === "truncate";
+  function finishLine(line2, lineWidth2, lineHeight2) {
+    line2.width = lineWidth2;
+    line2.lineHeight = lineHeight2;
+    calculatedHeight += lineHeight2;
+    calculatedWidth = Math.max(calculatedWidth, lineWidth2);
+  }
+  outer:
+    for (var i = 0; i < contentBlock.lines.length; i++) {
+      var line = contentBlock.lines[i];
+      var lineHeight = 0;
+      var lineWidth = 0;
+      for (var j = 0; j < line.tokens.length; j++) {
+        var token = line.tokens[j];
+        var tokenStyle = token.styleName && style.rich[token.styleName] || {};
+        var textPadding = token.textPadding = tokenStyle.padding;
+        var paddingH = textPadding ? textPadding[1] + textPadding[3] : 0;
+        var font = token.font = tokenStyle.font || style.font;
+        token.contentHeight = getLineHeight(font);
+        var tokenHeight = retrieve2(tokenStyle.height, token.contentHeight);
+        token.innerHeight = tokenHeight;
+        textPadding && (tokenHeight += textPadding[0] + textPadding[2]);
+        token.height = tokenHeight;
+        token.lineHeight = retrieve3(tokenStyle.lineHeight, style.lineHeight, tokenHeight);
+        token.align = tokenStyle && tokenStyle.align || style.align;
+        token.verticalAlign = tokenStyle && tokenStyle.verticalAlign || "middle";
+        if (truncateLine && topHeight != null && calculatedHeight + token.lineHeight > topHeight) {
+          if (j > 0) {
+            line.tokens = line.tokens.slice(0, j);
+            finishLine(line, lineWidth, lineHeight);
+            contentBlock.lines = contentBlock.lines.slice(0, i + 1);
+          } else {
+            contentBlock.lines = contentBlock.lines.slice(0, i);
+          }
+          break outer;
+        }
+        var styleTokenWidth = tokenStyle.width;
+        var tokenWidthNotSpecified = styleTokenWidth == null || styleTokenWidth === "auto";
+        if (typeof styleTokenWidth === "string" && styleTokenWidth.charAt(styleTokenWidth.length - 1) === "%") {
+          token.percentWidth = styleTokenWidth;
+          pendingList.push(token);
+          token.contentWidth = getWidth(token.text, font);
+        } else {
+          if (tokenWidthNotSpecified) {
+            var textBackgroundColor = tokenStyle.backgroundColor;
+            var bgImg = textBackgroundColor && textBackgroundColor.image;
+            if (bgImg) {
+              bgImg = findExistImage(bgImg);
+              if (isImageReady(bgImg)) {
+                token.width = Math.max(token.width, bgImg.width * tokenHeight / bgImg.height);
+              }
+            }
+          }
+          var remainTruncWidth = truncate && topWidth != null ? topWidth - lineWidth : null;
+          if (remainTruncWidth != null && remainTruncWidth < token.width) {
+            if (!tokenWidthNotSpecified || remainTruncWidth < paddingH) {
+              token.text = "";
+              token.width = token.contentWidth = 0;
+            } else {
+              token.text = truncateText(token.text, remainTruncWidth - paddingH, font, style.ellipsis, { minChar: style.truncateMinChar });
+              token.width = token.contentWidth = getWidth(token.text, font);
+            }
+          } else {
+            token.contentWidth = getWidth(token.text, font);
+          }
+        }
+        token.width += paddingH;
+        lineWidth += token.width;
+        tokenStyle && (lineHeight = Math.max(lineHeight, token.lineHeight));
+      }
+      finishLine(line, lineWidth, lineHeight);
+    }
+  contentBlock.outerWidth = contentBlock.width = retrieve2(topWidth, calculatedWidth);
+  contentBlock.outerHeight = contentBlock.height = retrieve2(topHeight, calculatedHeight);
+  contentBlock.contentHeight = calculatedHeight;
+  contentBlock.contentWidth = calculatedWidth;
+  if (stlPadding) {
+    contentBlock.outerWidth += stlPadding[1] + stlPadding[3];
+    contentBlock.outerHeight += stlPadding[0] + stlPadding[2];
+  }
+  for (var i = 0; i < pendingList.length; i++) {
+    var token = pendingList[i];
+    var percentWidth = token.percentWidth;
+    token.width = parseInt(percentWidth, 10) / 100 * contentBlock.width;
+  }
+  return contentBlock;
+}
+function pushTokens(block, str, style, wrapInfo, styleName) {
+  var isEmptyStr = str === "";
+  var tokenStyle = styleName && style.rich[styleName] || {};
+  var lines = block.lines;
+  var font = tokenStyle.font || style.font;
+  var newLine = false;
+  var strLines;
+  var linesWidths;
+  if (wrapInfo) {
+    var tokenPadding = tokenStyle.padding;
+    var tokenPaddingH = tokenPadding ? tokenPadding[1] + tokenPadding[3] : 0;
+    if (tokenStyle.width != null && tokenStyle.width !== "auto") {
+      var outerWidth_1 = parsePercent(tokenStyle.width, wrapInfo.width) + tokenPaddingH;
+      if (lines.length > 0) {
+        if (outerWidth_1 + wrapInfo.accumWidth > wrapInfo.width) {
+          strLines = str.split("\n");
+          newLine = true;
+        }
+      }
+      wrapInfo.accumWidth = outerWidth_1;
+    } else {
+      var res = wrapText(str, font, wrapInfo.width, wrapInfo.breakAll, wrapInfo.accumWidth);
+      wrapInfo.accumWidth = res.accumWidth + tokenPaddingH;
+      linesWidths = res.linesWidths;
+      strLines = res.lines;
+    }
+  } else {
+    strLines = str.split("\n");
+  }
+  for (var i = 0; i < strLines.length; i++) {
+    var text = strLines[i];
+    var token = new RichTextToken();
+    token.styleName = styleName;
+    token.text = text;
+    token.isLineHolder = !text && !isEmptyStr;
+    if (typeof tokenStyle.width === "number") {
+      token.width = tokenStyle.width;
+    } else {
+      token.width = linesWidths ? linesWidths[i] : getWidth(text, font);
+    }
+    if (!i && !newLine) {
+      var tokens = (lines[lines.length - 1] || (lines[0] = new RichTextLine())).tokens;
+      var tokensLen = tokens.length;
+      tokensLen === 1 && tokens[0].isLineHolder ? tokens[0] = token : (text || !tokensLen || isEmptyStr) && tokens.push(token);
+    } else {
+      lines.push(new RichTextLine([token]));
+    }
+  }
+}
+function isAlphabeticLetter(ch) {
+  var code = ch.charCodeAt(0);
+  return code >= 32 && code <= 591 || code >= 880 && code <= 4351 || code >= 4608 && code <= 5119 || code >= 7680 && code <= 8303;
+}
+var breakCharMap = reduce(",&?/;] ".split(""), function(obj, ch) {
+  obj[ch] = true;
+  return obj;
+}, {});
+function isWordBreakChar(ch) {
+  if (isAlphabeticLetter(ch)) {
+    if (breakCharMap[ch]) {
+      return true;
+    }
+    return false;
+  }
+  return true;
+}
+function wrapText(text, font, lineWidth, isBreakAll, lastAccumWidth) {
+  var lines = [];
+  var linesWidths = [];
+  var line = "";
+  var currentWord = "";
+  var currentWordWidth = 0;
+  var accumWidth = 0;
+  for (var i = 0; i < text.length; i++) {
+    var ch = text.charAt(i);
+    if (ch === "\n") {
+      if (currentWord) {
+        line += currentWord;
+        accumWidth += currentWordWidth;
+      }
+      lines.push(line);
+      linesWidths.push(accumWidth);
+      line = "";
+      currentWord = "";
+      currentWordWidth = 0;
+      accumWidth = 0;
+      continue;
+    }
+    var chWidth = getWidth(ch, font);
+    var inWord = isBreakAll ? false : !isWordBreakChar(ch);
+    if (!lines.length ? lastAccumWidth + accumWidth + chWidth > lineWidth : accumWidth + chWidth > lineWidth) {
+      if (!accumWidth) {
+        if (inWord) {
+          lines.push(currentWord);
+          linesWidths.push(currentWordWidth);
+          currentWord = ch;
+          currentWordWidth = chWidth;
+        } else {
+          lines.push(ch);
+          linesWidths.push(chWidth);
+        }
+      } else if (line || currentWord) {
+        if (inWord) {
+          if (!line) {
+            line = currentWord;
+            currentWord = "";
+            currentWordWidth = 0;
+            accumWidth = currentWordWidth;
+          }
+          lines.push(line);
+          linesWidths.push(accumWidth - currentWordWidth);
+          currentWord += ch;
+          currentWordWidth += chWidth;
+          line = "";
+          accumWidth = currentWordWidth;
+        } else {
+          if (currentWord) {
+            line += currentWord;
+            currentWord = "";
+            currentWordWidth = 0;
+          }
+          lines.push(line);
+          linesWidths.push(accumWidth);
+          line = ch;
+          accumWidth = chWidth;
+        }
+      }
+      continue;
+    }
+    accumWidth += chWidth;
+    if (inWord) {
+      currentWord += ch;
+      currentWordWidth += chWidth;
+    } else {
+      if (currentWord) {
+        line += currentWord;
+        currentWord = "";
+        currentWordWidth = 0;
+      }
+      line += ch;
+    }
+  }
+  if (!lines.length && !line) {
+    line = text;
+    currentWord = "";
+    currentWordWidth = 0;
+  }
+  if (currentWord) {
+    line += currentWord;
+  }
+  if (line) {
+    lines.push(line);
+    linesWidths.push(accumWidth);
+  }
+  if (lines.length === 1) {
+    accumWidth += lastAccumWidth;
+  }
+  return {
+    accumWidth,
+    lines,
+    linesWidths
+  };
+}
 
 // ../node_modules/zrender/lib/graphic/helper/roundRect.js
 function buildPath(ctx, shape) {
@@ -10384,106 +10991,6 @@ var CompoundPath = function(_super) {
 }(Path_default);
 var CompoundPath_default = CompoundPath;
 
-// ../node_modules/zrender/lib/canvas/helper.js
-function isSafeNum(num) {
-  return isFinite(num);
-}
-function createLinearGradient(ctx, obj, rect) {
-  var x = obj.x == null ? 0 : obj.x;
-  var x2 = obj.x2 == null ? 1 : obj.x2;
-  var y = obj.y == null ? 0 : obj.y;
-  var y2 = obj.y2 == null ? 0 : obj.y2;
-  if (!obj.global) {
-    x = x * rect.width + rect.x;
-    x2 = x2 * rect.width + rect.x;
-    y = y * rect.height + rect.y;
-    y2 = y2 * rect.height + rect.y;
-  }
-  x = isSafeNum(x) ? x : 0;
-  x2 = isSafeNum(x2) ? x2 : 1;
-  y = isSafeNum(y) ? y : 0;
-  y2 = isSafeNum(y2) ? y2 : 0;
-  var canvasGradient = ctx.createLinearGradient(x, y, x2, y2);
-  return canvasGradient;
-}
-function createRadialGradient(ctx, obj, rect) {
-  var width = rect.width;
-  var height = rect.height;
-  var min3 = Math.min(width, height);
-  var x = obj.x == null ? 0.5 : obj.x;
-  var y = obj.y == null ? 0.5 : obj.y;
-  var r = obj.r == null ? 0.5 : obj.r;
-  if (!obj.global) {
-    x = x * width + rect.x;
-    y = y * height + rect.y;
-    r = r * min3;
-  }
-  x = isSafeNum(x) ? x : 0.5;
-  y = isSafeNum(y) ? y : 0.5;
-  r = r >= 0 && isSafeNum(r) ? r : 0.5;
-  var canvasGradient = ctx.createRadialGradient(x, y, 0, x, y, r);
-  return canvasGradient;
-}
-function getCanvasGradient(ctx, obj, rect) {
-  var canvasGradient = obj.type === "radial" ? createRadialGradient(ctx, obj, rect) : createLinearGradient(ctx, obj, rect);
-  var colorStops = obj.colorStops;
-  for (var i = 0; i < colorStops.length; i++) {
-    canvasGradient.addColorStop(colorStops[i].offset, colorStops[i].color);
-  }
-  return canvasGradient;
-}
-function isClipPathChanged(clipPaths, prevClipPaths) {
-  if (clipPaths === prevClipPaths || !clipPaths && !prevClipPaths) {
-    return false;
-  }
-  if (!clipPaths || !prevClipPaths || clipPaths.length !== prevClipPaths.length) {
-    return true;
-  }
-  for (var i = 0; i < clipPaths.length; i++) {
-    if (clipPaths[i] !== prevClipPaths[i]) {
-      return true;
-    }
-  }
-  return false;
-}
-function parseInt10(val) {
-  return parseInt(val, 10);
-}
-function getSize(root, whIdx, opts) {
-  var wh = ["width", "height"][whIdx];
-  var cwh = ["clientWidth", "clientHeight"][whIdx];
-  var plt = ["paddingLeft", "paddingTop"][whIdx];
-  var prb = ["paddingRight", "paddingBottom"][whIdx];
-  if (opts[wh] != null && opts[wh] !== "auto") {
-    return parseFloat(opts[wh]);
-  }
-  var stl = document.defaultView.getComputedStyle(root);
-  return (root[cwh] || parseInt10(stl[wh]) || parseInt10(root.style[wh])) - (parseInt10(stl[plt]) || 0) - (parseInt10(stl[prb]) || 0) | 0;
-}
-
-// ../node_modules/zrender/lib/canvas/dashStyle.js
-function normalizeLineDash(lineType, lineWidth) {
-  if (!lineType || lineType === "solid" || !(lineWidth > 0)) {
-    return null;
-  }
-  return lineType === "dashed" ? [4 * lineWidth, 2 * lineWidth] : lineType === "dotted" ? [lineWidth] : isNumber(lineType) ? [lineType] : isArray(lineType) ? lineType : null;
-}
-function getLineDash(el) {
-  var style = el.style;
-  var lineDash = style.lineDash && style.lineWidth > 0 && normalizeLineDash(style.lineDash, style.lineWidth);
-  var lineDashOffset = style.lineDashOffset;
-  if (lineDash) {
-    var lineScale_1 = style.strokeNoScale && el.getLineScale ? el.getLineScale() : 1;
-    if (lineScale_1 && lineScale_1 !== 1) {
-      lineDash = map(lineDash, function(rawVal) {
-        return rawVal / lineScale_1;
-      });
-      lineDashOffset /= lineScale_1;
-    }
-  }
-  return [lineDash, lineDashOffset];
-}
-
 export {
   __extends,
   env_default,
@@ -10534,7 +11041,6 @@ export {
   disableUserSelect,
   hasOwn,
   noop,
-  RADIAN_TO_DEGREE,
   util_exports,
   create,
   copy,
@@ -10575,7 +11081,6 @@ export {
   BoundingRect_default,
   sort,
   REDRAW_BIT,
-  SHAPE_CHANGED_BIT,
   requestAnimationFrame_default,
   cubicAt,
   cubicDerivativeAt,
@@ -10630,9 +11135,7 @@ export {
   registerSSRDataGetter,
   zrender_exports,
   createOrUpdateImage,
-  isImageReady,
   truncateText,
-  DEFAULT_COMMON_STYLE,
   Displayable_default,
   fromPoints,
   normalizeArcAngles,
@@ -10654,9 +11157,11 @@ export {
   Text_default,
   CompoundPath_default,
   getCanvasGradient,
-  isClipPathChanged,
   getSize,
-  getLineDash
+  getLineDash,
+  createCanvasPattern,
+  brushSingle,
+  brush
 };
 /*! Bundled license information:
 
@@ -10687,4 +11192,4 @@ zrender/lib/zrender.js:
   * https://github.com/ecomfe/zrender/blob/master/LICENSE.txt
   *)
 */
-//# sourceMappingURL=chunk-ESTDIZVI.js.map
+//# sourceMappingURL=chunk-CDQETP4X.js.map

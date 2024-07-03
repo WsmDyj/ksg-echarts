@@ -1,14 +1,24 @@
-import { KsgPieChart as s } from "./pie/index.js";
-import { KsgBaseChart as a } from "./base/index.js";
-const n = [s, a], r = (t) => {
-  n.forEach((o) => {
-    t.component(o.name, o);
+import "./index.css.js";
+import { KsgBaseChart as t } from "./base/index.js";
+import { INIT_OPTIONS_KEY as I, LOADING_OPTIONS_KEY as P, PALETTE_KEY as c, THEME_KEY as h, UPDATE_OPTIONS_KEY as N } from "./base/index.js";
+import { KsgBarChart as m } from "./bar/index.js";
+import { KsgPieChart as a } from "./pie/index.js";
+import { KsgLineChart as s } from "./line/index.js";
+const E = [a, s, t, m], e = (r) => {
+  E.forEach((o) => {
+    r.component(o.name, o);
   });
-}, c = {
-  install: r
+}, _ = {
+  install: e
 };
 export {
-  a as KsgBaseChart,
-  s as KsgPieChart,
-  c as default
+  I as INIT_OPTIONS_KEY,
+  m as KsgBarChart,
+  t as KsgBaseChart,
+  a as KsgPieChart,
+  P as LOADING_OPTIONS_KEY,
+  c as PALETTE_KEY,
+  h as THEME_KEY,
+  N as UPDATE_OPTIONS_KEY,
+  _ as default
 };

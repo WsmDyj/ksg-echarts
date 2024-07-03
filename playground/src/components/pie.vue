@@ -2,7 +2,7 @@
    <ksg-pie-chart :palette="palette"  :data="chartData" />
 </template>
 <script setup lang="ts">
-import { ref, provide } from 'vue';
+import { ref } from 'vue';
 const chartData = ref([
   { Repo: 'Vue.js', star: 40000, },
   { Repo: 'React', star: 27800 },

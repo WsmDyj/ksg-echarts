@@ -39,9 +39,6 @@
   font-size: 15px;
 }
 
-.vp-doc tr {
-  border: 1px solid var(--demi-border-color);
-}
 
 .vp-doc tr:nth-child(2n) {
   background-color: unset;
@@ -50,18 +47,8 @@
   font-size: 28px;
 }
 
-.vp-doc th,
-.vp-doc td {
-  border: none;
-  padding: 10px 20px;
-}
 .vp-doc code {
   padding: 0 12px!important;
-}
-.vp-doc th {
-  font-size: 15px;
-  font-weight: 600;
-  background-color: var(--vp-c-white-soft);
 }
 
 .vp-doc table td:first-child {

@@ -1,17 +1,36 @@
-import { App } from 'vue';
+import { App, Ref } from 'vue';
 import { init } from 'echarts/core';
-import { SetOptionOpts } from 'echarts';
+import { EChartsOption, SetOptionOpts } from 'echarts';
 
 export * from './echarts';
 export * from './loading';
 type InitType = typeof init;
+export type Injection<T> = T | null | Ref<T | null> | {
+    value: T | null;
+};
 export type EChartsType = ReturnType<InitType>;
-type SetOptionType = EChartsType['setOption'];
 export type InitParameters = Parameters<InitType>;
-export type Option = Parameters<SetOptionType>[0];
+export type Option = EChartsOption;
+export type InitOptionsInjection = Injection<InitOptions>;
 export type Theme = NonNullable<InitParameters[1]>;
-export type AnyRecord = Record<string, any>;
 export type InitOptions = NonNullable<InitParameters[2]>;
+export type ThemeInjection = Injection<Theme>;
+export type UpdateOptionsInjection = Injection<UpdateOptions>;
+export type LoadingOptions = {
+    text?: string;
+    textColor?: string;
+    fontSize?: number | string;
+    fontWeight?: number | string;
+    fontStyle?: string;
+    fontFamily?: string;
+    maskColor?: string;
+    showSpinner?: boolean;
+    color?: string;
+    spinnerRadius?: number;
+    lineWidth?: number;
+    zlevel?: number;
+};
+export type AnyRecord = Record<string, any>;
 export type UpdateOptions = SetOptionOpts;
 export type WithInstall<T> = T & {
     install(app: App): void;
@@ -26,12 +45,8 @@ export type RadarIndicator = {
     min?: number;
     color?: string;
 };
-export interface KsgDataset {
-    dimensions: DataAtom | Array<RadarIndicator>;
-    measures: Array<DataAtom>;
-}
-export type KsgChartsData = KsgDataset;
+export type KsgChartsData = AnyRecord[];
 export interface KsgChartsProps {
-    data: KsgDataset;
+    data: KsgChartsData;
     option: Option;
 }

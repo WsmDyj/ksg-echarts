@@ -1,23 +1,29 @@
-import { defineComponent as o, createVNode as a, mergeProps as m } from "vue";
-import { KsgBaseChart as r } from "../../base/index.js";
-import p from "./helper.js";
-import { useWatchChartData as i } from "../../hook/useWatchChartData.js";
-import { install as n } from "../../node_modules/echarts/lib/chart/pie/install.js";
-import { use as s } from "../../node_modules/echarts/lib/extension.js";
-s([n]);
-const C = /* @__PURE__ */ o({
+import { defineComponent as p, createVNode as i, mergeProps as n } from "vue";
+import { KsgBaseChart as t } from "../../base/index.js";
+import f from "./computed.js";
+import { useWatchChartData as u } from "../../hook/useWatchChartData.js";
+import { install as d } from "../../node_modules/echarts/lib/chart/pie/install.js";
+import { use as l } from "../../node_modules/echarts/lib/extension.js";
+l([d]);
+const x = /* @__PURE__ */ p({
   name: "KsgPieChart",
-  extends: r,
+  extends: t,
   props: {
-    data: [Object, Array]
+    data: Array
   },
-  setup(e) {
-    const t = i(p, e);
-    return () => a(r, m(e, {
-      option: t.value
-    }), null);
+  setup(e, {
+    slots: o,
+    expose: a,
+    attrs: m
+  }) {
+    const [r, s] = u(f, e, a);
+    return console.log(r.value), () => i(t, n(m, {
+      ref: s
+    }, e, {
+      option: r.value
+    }), o);
   }
 });
 export {
-  C as default
+  x as default
 };

@@ -17,6 +17,7 @@ export default defineComponent({
   },
   setup(props, { slots, expose, attrs }) {
     const [mergedOption, ksgBaseChartRef] = useWatchChartData(LineComputed, props, expose);
+    console.log(mergedOption.value)
     return () => (
       <KsgBaseChart
         {...attrs}

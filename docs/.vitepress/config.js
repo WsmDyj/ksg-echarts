@@ -5,9 +5,9 @@ import Inspect from 'vite-plugin-inspect'
 import path from 'path'
 
 export default defineConfig({
+  lastUpdated: false, // string | boolean
   title: 'KsgEcharts',
   description: '`KsgEcharts` 是基于 `Vue3.x` 与 `ECharts5.x` 构建封装的组件库提供高可配置化、简捷、高效地构建图表组件化方案',
-  lastUpdated: true,
   cleanUrls: true,
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }]
@@ -44,7 +44,7 @@ export default defineConfig({
 
   themeConfig: {
     outlineTitle: '本页目录',
-    lastUpdatedText: '上次更新',
+    
     logo: '/logo.svg',
     search: {
       provider: 'local'
