@@ -134,12 +134,12 @@ export default defineConfig({
     },
 
     editLink: {
-      pattern: 'https://github.com/xinlei3166/vitepress-theme-demoblock/edit/main/docs/:path',
+      pattern: 'https://github.com/WsmDyj/ksg-echarts/edit/main/docs/:path',
       text: '在 GitHub 上编辑此页'
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/xinlei3166/vitepress-theme-demoblock' }
+      { icon: 'github', link: 'https://github.com/WsmDyj/ksg-echarts' }
     ],
 
     footer: {
