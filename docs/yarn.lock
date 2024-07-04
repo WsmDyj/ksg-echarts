@@ -1804,13 +1804,13 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-ksg-echarts@0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/ksg-echarts/-/ksg-echarts-0.0.8.tgz#3d5182c991f65911bd36efdf0eff58e3223fa8ec"
-  integrity sha512-o7KQOC1gAi4G7mB2X64a1uB8UlOX24Dk60IxtJtszdPH0kvIhSFnpKN2TYINzvWIJPciMNyDHAPzDwA+ak/ZlA==
+ksg-echarts@0.0.9:
+  version "0.0.9"
+  resolved "https://registry.npmjs.org/ksg-echarts/-/ksg-echarts-0.0.9.tgz#09ca904dcd76411f61abb1e2b993fd7cebed4b32"
+  integrity sha512-4rn1VbtGLPZyaT2NbahVeii3+bT7OoObJSFbMZ9FrRp662fJuSLdnG5KwOWLFzI+Z8N16r+j/5tu548nMgQWnw==
   dependencies:
     echarts "^5.5.1"
-    vue "^3.3.4"
+    vue "^3.4.31"
     vue-echarts "^6.7.3"
 
 less@^4.2.0:
@@ -2845,7 +2845,7 @@ vue-echarts@^6.7.3:
     resize-detector "^0.3.0"
     vue-demi "^0.13.11"
 
-vue@^3.3.4, vue@^3.4.21, vue@^3.4.27:
+vue@^3.3.4, vue@^3.4.21, vue@^3.4.27, vue@^3.4.31:
   version "3.4.31"
   resolved "https://registry.npmjs.org/vue/-/vue-3.4.31.tgz#83a3c4dab8302b0e974b0d4b92a2f6a6378ae797"
   integrity sha512-njqRrOy7W3YLAlVqSKpBebtZpDVg21FPoaq1I7f/+qqBThK9ChAIjkRWgeP6Eat+8C+iia4P3OYqpATP21BCoQ==
