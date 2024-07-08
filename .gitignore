@@ -6,8 +6,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-/dist
-/docs/.vitepress/dist
+dist
+docs/.vitepress/dist
 
 node_modules
 *.local
