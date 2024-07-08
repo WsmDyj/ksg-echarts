@@ -1,1 +1,0 @@
-"use strict";Object.defineProperty(exports,Symbol.toStringTag,{value:"Module"});const h=require("lodash-es"),e=require("vue");function u(r,a,o){const n=e.ref(),c=e.shallowRef();return e.watchEffect(()=>{const s=new r(a).getChartOption();n.value=h.merge(s,a.option)}),o({getInstance:()=>{var t;return(t=c.value)==null?void 0:t.getInstance()}}),[n,c]}exports.useWatchChartData=u;

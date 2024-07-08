@@ -1,1 +1,0 @@
-"use strict";Object.defineProperties(exports,{__esModule:{value:!0},[Symbol.toStringTag]:{value:"Module"}});const t=require("./src/index.js"),i=require("../utils.js"),e=i.withInstall(t.default);exports.KsgPieChart=e;exports.default=e;

@@ -16,7 +16,7 @@ const install = (app: App): void => {
     app.component(component.name, component);
   });
 };
-export { KsgBaseChart, KsgBarChart, KsgPieChart };
+export { KsgBaseChart, KsgBarChart, KsgPieChart, KsgLineChart };
 export default {
   install,
 };

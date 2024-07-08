@@ -1,1 +1,0 @@
-"use strict";Object.defineProperty(exports,Symbol.toStringTag,{value:"Module"});const r=require("vue"),u=n=>{const e=n;return e.install=t=>{t.component(e.name,e)},e};function o(n,e){const t=r.isRef(n)?r.unref(n):n;return t&&typeof t=="object"&&"value"in t?t.value||e:t||e}exports.unwrapInjected=o;exports.withInstall=u;
