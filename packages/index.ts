@@ -1,4 +1,3 @@
-import type { App } from 'vue';
 import './index.css'
 
 export * from './base';
@@ -11,7 +10,7 @@ import KsgLineChart from './line';
 
 const components = [KsgPieChart, KsgLineChart, KsgBaseChart, KsgBarChart];
 
-const install = (app: App): void => {
+const install = (app: any): void => {
   components.forEach((component) => {
     app.component(component.name, component);
   });

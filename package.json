@@ -1,7 +1,7 @@
 {
   "name": "ksg-echarts",
   "description": "echarts组件",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "repository": {
     "type": "git",
     "url": "https://github.com/WsmDyj/ksg-echarts"
@@ -33,8 +33,7 @@
     },
     "./style": {
       "import": "./dist/es/style.css"
-    },
-    "./*": "./*"
+    }
   },
   "keywords": [
     "ksg-echarts"
