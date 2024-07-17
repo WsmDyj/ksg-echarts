@@ -2,11 +2,11 @@
  * @Author: wusimin 
  * @Date: 2024-06-26 16:16:58
  * @LastEditors: wusimin wusimin@kuaishou.com
- * @LastEditTime: 2024-07-03 20:08:52
+ * @LastEditTime: 2024-07-17 19:22:52
  * @FilePath: /kwaida/packages/kwaida-charts/packages/base/chart.tsx
  * @Description: 基础组件
  */
-import { computed, defineComponent, inject, ref, shallowRef } from 'vue';
+import { computed, defineComponent, inject, ref, shallowRef, watch } from 'vue';
 import VChart from 'vue-echarts';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
@@ -22,6 +22,7 @@ import EmptyData from './emptyData';
 import { basicProps } from './props';
 import { unwrapInjected } from '../utils';
 import { PALETTE_KEY } from '.';
+import { Option } from '../types';
  use([
    CanvasRenderer,
    DatasetComponent,
@@ -42,26 +43,32 @@ export default defineComponent({
     const isHasData = ref(true);
     const defaultPalette = inject(PALETTE_KEY, null);
     const realPalette = computed(() => props.palette || unwrapInjected(defaultPalette, null));
-    const option = computed(() => {
-      const { legend = {} } = props.option;
-      const legendTemp = {
-        type: 'scroll',
-        orient: 'horizontal',
-        bottom: 'bottom'
-      };
-      isHasData.value = isArray(props.option.dataset)
-        ? true
-        : !!props.option.dataset.source?.length;
-      console.log(realPalette.value);
-      const computedOption = {
-        ...props.option,
-        legend: merge(legendTemp, legend),
-      };
-      // 设置主题样式表
-      realPalette.value && Reflect.set(computedOption, 'color', realPalette.value);
-      return computedOption;
-    });
+    const option = ref<Option>();
     const instanceRef = shallowRef<InstanceType<typeof VChart>>();
+
+    watch(() => props.option, (value) => {
+      if (value) {
+        const legendTemp = {
+          type: 'scroll',
+          orient: 'horizontal',
+          bottom: 'bottom'
+        };
+        // Determine if there is a value
+        isHasData.value = props.option?.dataset
+          ? isArray(props.option.dataset)
+            ? true
+            : !!props.option?.dataset.source?.length
+          : false;
+        const computedOption = {
+          ...props.option,
+          legend: merge(legendTemp, props.option?.legend)
+        };
+        // 设置主题样式表
+        realPalette.value && Reflect.set(computedOption, 'color', realPalette.value);
+        option.value = computedOption;
+      }
+    }, { deep: true, immediate: true })
+
     const styless = computed(() => {
       return {
         height: isNumber(props.height) ? `${props.height}px` : props.height,

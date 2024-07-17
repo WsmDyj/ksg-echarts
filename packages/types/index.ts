@@ -56,6 +56,6 @@ export type KsgChartsData = AnyRecord[];
 
 
 export interface KsgChartsProps {
-  data: KsgChartsData;
-  option: Option;
+  data?: KsgChartsData;
+  option?: Option;
 }

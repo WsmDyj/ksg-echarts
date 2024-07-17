@@ -1,16 +1,8 @@
-/*
- * @Author: wusimin 
- * @Date: 2024-06-26 15:47:00
- * @LastEditors: wusimin 
- * @LastEditTime: 2024-07-01 22:50:45
- * @FilePath: /kwaida/packages/kwaida-charts/packages/bar/index.tsx
- * @Description: 饼图
- */
-
 import Chart from './src';
 import { withInstall } from '../utils';
+import usePieChart from './src/usePieChart';
 
 const KsgPieChart = withInstall<typeof Chart>(Chart);
 
-export { KsgPieChart };
+export { KsgPieChart, usePieChart };
 export default KsgPieChart;
