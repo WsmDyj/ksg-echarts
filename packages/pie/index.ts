@@ -1,8 +1,7 @@
-import Chart from './src';
+import Chart from './chart';
 import { withInstall } from '../utils';
-import usePieChart from './src/usePieChart';
 
 const KsgPieChart = withInstall<typeof Chart>(Chart);
 
-export { KsgPieChart, usePieChart };
+export { KsgPieChart };
 export default KsgPieChart;

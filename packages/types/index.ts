@@ -54,8 +54,3 @@ export type RadarIndicator = {
 
 export type KsgChartsData = AnyRecord[];
 
-
-export interface KsgChartsProps {
-  data?: KsgChartsData;
-  option?: Option;
-}

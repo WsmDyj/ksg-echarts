@@ -1,5 +1,5 @@
 
-import Chart from './src';
+import Chart from './chart';
 import { withInstall } from '../utils';
 
 const KsgLineChart = withInstall<typeof Chart>(Chart);

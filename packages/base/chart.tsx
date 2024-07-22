@@ -2,7 +2,7 @@
  * @Author: wusimin 
  * @Date: 2024-06-26 16:16:58
  * @LastEditors: wusimin wusimin@kuaishou.com
- * @LastEditTime: 2024-07-17 19:22:52
+ * @LastEditTime: 2024-07-22 17:51:53
  * @FilePath: /kwaida/packages/kwaida-charts/packages/base/chart.tsx
  * @Description: 基础组件
  */

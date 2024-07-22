@@ -1,12 +1,10 @@
 import { PieChart } from 'echarts/charts';
 import { use } from 'echarts/core';
-import { PropType, defineComponent, shallowRef, watch } from 'vue';
-import { KsgBaseChart } from '../../base';
-import { KsgChartsData } from '../../types';
+import { PropType, defineComponent, shallowRef, watch, unref } from 'vue';
+import { KsgBaseChart } from '../base';
+import { KsgChartsData } from '../types';
 import usePieChart from './usePieChart';
-import { KsgBaseChartExpose } from '../../base/chart';
-
-use([PieChart]);
+import { KsgBaseChartExpose } from '../base/chart';
 
 export default defineComponent({
   name: 'KsgPieChart',
@@ -16,8 +14,10 @@ export default defineComponent({
     data: Array as PropType<KsgChartsData>
   },
   setup(props, { slots, expose, attrs }) {
+    use([PieChart]);
     const ksgBaseChartRef = shallowRef<InstanceType<typeof KsgBaseChart> & KsgBaseChartExpose>();
     const { option, initOptions } = usePieChart();
+
     watch(
       () => props,
       () => {
@@ -28,17 +28,17 @@ export default defineComponent({
 
     expose({
       getInstance: () => ksgBaseChartRef.value?.getInstance(),
-      initOptions: () => initOptions()
+      getOptions: () => unref(option)
     });
 
     return () => (
-        <KsgBaseChart
-          {...attrs}
-          {...props}
-          ref={ksgBaseChartRef}
-          v-slots={slots}
-          option={option.value}
-        />
-      )
+      <KsgBaseChart
+        {...attrs}
+        {...props}
+        ref={ksgBaseChartRef}
+        v-slots={slots}
+        option={option.value}
+      />
+    );
   }
 });

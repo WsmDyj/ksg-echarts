@@ -1,18 +1,25 @@
-import { Option, KsgChartsData, ChartCommonOption, KsgChartsProps } from '../../types';
-import { nextTick, ref } from 'vue';
-import { useComputeDataset } from '../../hook/useComputeDataset';
+import { Option, KsgChartsData, ChartCommonOption } from '../types';
+import { ref } from 'vue';
+import { useComputeDataset } from '../hook/useComputeDataset';
 import { merge } from 'lodash-es';
 import { PieSeriesOption } from 'echarts/charts';
 import { ComposeOption } from 'echarts/core';
 export type PieChartOptions = ComposeOption<PieSeriesOption | ChartCommonOption>;
 
-export interface PieOptions extends Option, KsgChartsProps {
-  variant?: 'pie' | 'donut' | 'solid';
+/**
+ * 自定义的一些配置api
+ */
+export interface KsgPieOptions extends Option {
+  variant?: 'donut' | 'solid'; // 是否实心
 }
 
-export default function usePieChart(elRef?: any) {
+export interface PieOptions extends Option {
+  data?: KsgChartsData;
+  option?: KsgPieOptions;
+}
+
+export default function useInitChart() {
   const option = ref<Option | undefined>(undefined);
-  const presets = ref()
   // 配置数据集
   function getPieDataset(data: KsgChartsData) {
     if (!data || !data?.length) return;
@@ -22,7 +29,7 @@ export default function usePieChart(elRef?: any) {
 
   function getPieSeries(props: PieOptions) {
     let series: Array<PieChartOptions> = [];
-    const isSolid = props.variant === 'solid';
+    const isSolid = props.option?.variant === 'solid';
     const { dimensions } = useComputeDataset(props.data);
     series = dimensions.slice(1, dimensions.length).map((item, idx) => {
       const seriesItem = props.option?.series?.[idx] || props.option?.series || {};
@@ -50,7 +57,6 @@ export default function usePieChart(elRef?: any) {
   }
 
   function initOptions(props: PieOptions) {
-    console.log(presets.value);
     const mergeOption = merge(
       {
         dataset: getPieDataset(props.data),
@@ -62,10 +68,5 @@ export default function usePieChart(elRef?: any) {
     option.value = mergeOption;
   }
 
-  function setOptions(option: Option) {
-    presets.value = option
-    elRef.value?.getInstance()?.setOptions(merge(option.value, option));
-  }
-
-  return { option, initOptions, setOptions };
+  return { option, initOptions };
 }

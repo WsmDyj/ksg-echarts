@@ -1,7 +1,7 @@
 import { InjectionKey, Ref } from 'vue';
 import { withInstall } from '../utils';
 import Chart from './chart';
-
+import useChart from './useChart';
 import {
   InitOptionsInjection,
   LoadingOptions,
@@ -11,7 +11,7 @@ import {
 
 const KsgBaseChart = withInstall<typeof Chart>(Chart);
 
-export { KsgBaseChart };
+export { KsgBaseChart, useChart };
 
 export default KsgBaseChart;
 
