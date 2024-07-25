@@ -15,27 +15,13 @@ export default defineComponent({
   },
   setup(props, ctx) {
     use([LineChart, GridComponent]);
-    const { ksgBaseChartRef, option } = useBaseChart(props, ctx, useLineChart);
-
-    // return () => (
-    //   <KsgBaseChart
-    //     {...ctx.attrs}
-    //     {...props}
-    //     ref={ksgBaseChartRef}
-    //     v-slots={ctx.slots}
-    //     option={option.value}
-    //   />
-    // );
-    return {
-      ksgBaseChartRef, option
-    }
+    const { ksgBaseChartRef, options } = useBaseChart(props, ctx, useLineChart);
+    return { ksgBaseChartRef, options };
   },
   render() {
-    return h('KsgBaseChart', { 
-      ...this.ctx.attrs, 
-      ...this.props,
-      option:this.option, 
-      ref: this.ksgBaseChartRef 
+    return h(KsgBaseChart, {
+      ...this.options,
+      ref: el => this.ksgBaseChartRef = el
     });
   }
 });

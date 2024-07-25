@@ -8,31 +8,32 @@ import {useChart} from '../../../packages/'
 const chartData = ref([]);
 const { setOptions } = useChart(chartRef)
 const option = ref({
-  variant: 'solid' // 实心
+  // series: {
+  //   smooth: true
+  // }
 })
 const loading = ref(false)
 onMounted(() => {
   loading.value = true
   setTimeout(() => {
     chartData.value = [
-      { Repo: 'Vue.js', star: 40000, },
-      { Repo: 'React', star: 27800 },
-      { Repo: 'Create RA', star: 22500 },
-      { Repo: 'Puppteer', star: 22000 },
-      { Repo: 'Axios', star: 21900 },
-      { Repo: 'Prettier', star: 14800 },
-      { Repo: 'VS Code', star: 20200 },
-      { Repo: 'RN', star: 17700 },
-      { Repo: 'Element', star: 15600 },
-      { Repo: 'Electron', star: 14900 },
+      { week: 'Mon', vue: 3000, react: 2000, Angular: 827 },
+  { week: 'Tue', vue: 3500, react: 2000, Angular: 949 },
+  { week: 'Wed', vue: 3900, react: 2600, Angular: 1400 },
+  { week: 'Thu', vue: 3100, react: 2300, Angular: 1000 },
+  { week: 'Fir', vue: 3200, react: 2300, Angular: 884 },
+  { week: 'Sat', vue: 3100, react: 2000, Angular: 911 },
+  { week: 'Sun', vue: 3600, react: 2600 , Angular: 983 }
     ]
     loading.value = false
-// setOptions({
-//   title: {
-//     text: '自动设置title',
-//   },
-//   series: [{radius: ['0', '60%']}], // 实心
-// })
+setOptions({
+  title: {
+    text: '自动设置title',
+  },
+  series: {
+    smooth: true
+  }
+})
   }, 2000);
 })
 </script>

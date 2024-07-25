@@ -46,7 +46,7 @@ export default function useLineChart() {
   // 声明一个 X 轴，类目轴（category）。默认情况下，类目轴对应到 dataset 第一列。
   function getBarMeatAxis() {
     return {
-      type: 'category'
+      type: 'category',
     };
   }
 
