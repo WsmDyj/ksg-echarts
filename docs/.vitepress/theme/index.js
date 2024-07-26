@@ -4,7 +4,7 @@ import { useComponents } from './useComponents'
 import './style/var.css';
 import './style/custom.css';
 import ksgEchart from 'ksg-echarts';
-import 'ksg-echarts/dist/es/style.css'
+import '../../node_modules/ksg-echarts/dist/es/style.css'
 export default {
   ...DefaultTheme,
   enhanceApp(ctx) {
