@@ -1,22 +1,20 @@
-import { PropType, defineComponent, h, } from 'vue';
-import { LineChart } from 'echarts/charts';
+import { PieChart } from 'echarts/charts';
 import { use } from 'echarts/core';
-import { GridComponent } from 'echarts/components';
-
-import { KsgBaseChart, basicProps } from '../base';
+import { PropType, defineComponent, h } from 'vue';
+import { basicProps, KsgBaseChart } from '../base';
 import { KsgChartsData } from '../types';
-import { useLineChart} from './useLineChart';
+import usePieChart from './usePieChart';
 import useBaseChart from '../base/hooks/useBaseChart';
 
 export default defineComponent({
-  name: 'KsgLineChart',
+  name: 'KsgPieChart',
   props: {
     ...basicProps,
     data: Array as PropType<KsgChartsData>
   },
   setup() {
-    use([LineChart, GridComponent]);
-    const { ksgBaseChartRef, options } = useBaseChart(useLineChart);
+    use([PieChart]);
+    const { ksgBaseChartRef, options } = useBaseChart(usePieChart);
     return {
       ksgBaseChartRef,
       options,

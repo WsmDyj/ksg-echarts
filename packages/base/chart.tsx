@@ -1,11 +1,3 @@
-/*
- * @Author: wusimin 
- * @Date: 2024-06-26 16:16:58
- * @LastEditors: wusimin wusimin@kuaishou.com
- * @LastEditTime: 2024-07-22 17:51:53
- * @FilePath: /kwaida/packages/kwaida-charts/packages/base/chart.tsx
- * @Description: 基础组件
- */
 import { computed, defineComponent, inject, ref, shallowRef, watch } from 'vue';
 import VChart from 'vue-echarts';
 import { use } from 'echarts/core';
@@ -17,10 +9,10 @@ import {
   DatasetComponent,
   TransformComponent
 } from 'echarts/components';
-import { isArray, isNumber, merge } from 'lodash-es';
-import EmptyData from './emptyData';
+import { isArray, merge } from 'lodash-es';
+import Empty from './empty';
 import { basicProps } from './props';
-import { unwrapInjected } from '../utils';
+import { computePx, unwrapInjected } from '../utils';
 import { PALETTE_KEY } from '.';
 import { Option } from '../types';
  use([
@@ -43,7 +35,7 @@ export default defineComponent({
     const isHasData = ref(true);
     const defaultPalette = inject(PALETTE_KEY, null);
     const realPalette = computed(() => props.palette || unwrapInjected(defaultPalette, null));
-    const option = ref<Option>();
+    const option = ref<Option | null>(null);
     const instanceRef = shallowRef<InstanceType<typeof VChart>>();
 
     watch(() => props.option, (value) => {
@@ -71,8 +63,8 @@ export default defineComponent({
 
     const styless = computed(() => {
       return {
-        height: isNumber(props.height) ? `${props.height}px` : props.height,
-        width: isNumber(props.width) ? `${props.width}px` : props.width
+        height: computePx(props.height),
+        width: computePx(props.width)
       };
     });
 
@@ -80,15 +72,12 @@ export default defineComponent({
       getInstance: () => instanceRef.value?.chart
     });
 
+    const renderEmpty = () =>
+      slots.default ? slots.default() : <Empty emptyText={props.emptyText} />;
+
     return () => (
       <div style={styless.value} class="ksgchart">
-        {!isHasData.value && !props.loading ? (
-          slots.default ? (
-            slots.default()
-          ) : (
-            <EmptyData emptyText={props.emptyText} />
-          )
-        ) : (
+        {!isHasData.value && !props.loading ? renderEmpty() : (
           <v-chart
             updateOptions={{ notMerge: true }}
             {...props}
@@ -96,7 +85,7 @@ export default defineComponent({
             ref={instanceRef}
             style={{ height: '100%', width: '100%' }}
             autoresize={props.autoresize}
-            option={option.value}
+            option={props.loading ? null : option.value}
             init-options={{ renderer: 'svg' }}
           />
         )}

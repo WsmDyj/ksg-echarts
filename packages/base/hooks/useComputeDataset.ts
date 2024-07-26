@@ -1,4 +1,4 @@
-import { KsgChartsData } from "../types";
+import { KsgChartsData } from "../../types";
 
 export function useComputeDataset(data: KsgChartsData) {
   const dimensions = new Set()

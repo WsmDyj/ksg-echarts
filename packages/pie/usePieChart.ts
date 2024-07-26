@@ -1,6 +1,6 @@
 import { Option, KsgChartsData, ChartCommonOption } from '../types';
 import { ref } from 'vue';
-import { useComputeDataset } from '../hook/useComputeDataset';
+import { useComputeDataset } from '../base/hooks/useComputeDataset';
 import { merge } from 'lodash-es';
 import { PieSeriesOption } from 'echarts/charts';
 import { ComposeOption } from 'echarts/core';
@@ -18,19 +18,19 @@ export interface PieOptions extends Option {
   option?: KsgPieOptions;
 }
 
-export default function useInitChart() {
+export default function usePieChart() {
   const option = ref<Option | undefined>(undefined);
   // 配置数据集
-  function getPieDataset(data: KsgChartsData) {
+  function getDataset(data: KsgChartsData) {
     if (!data || !data?.length) return;
     const { dataset } = useComputeDataset(data);
     return dataset;
   }
 
-  function getPieSeries(props: PieOptions) {
+  function getSeries(props: PieOptions) {
     let series: Array<PieChartOptions> = [];
     const isSolid = props.option?.variant === 'solid';
-    const { dimensions } = useComputeDataset(props.data);
+    const dimensions = useComputeDataset(props.data)?.dimensions;
     series = dimensions.slice(1, dimensions.length).map((item, idx) => {
       const seriesItem = props.option?.series?.[idx] || props.option?.series || {};
       return merge(
@@ -49,24 +49,24 @@ export default function useInitChart() {
     return series;
   }
 
-  function getPieTooltip() {
+  function getTooltip() {
     return {
       trigger: 'item',
       confine: true
     };
   }
 
-  function initOptions(props: PieOptions) {
+  function setOptions(props: PieOptions) {
     const mergeOption = merge(
       {
-        dataset: getPieDataset(props.data),
-        series: getPieSeries(props),
-        tooltip: getPieTooltip()
+        dataset: getDataset(props.data),
+        series: getSeries(props),
+        tooltip: getTooltip()
       },
       props.option
     );
     option.value = mergeOption;
   }
 
-  return { option, initOptions };
+  return { option, setOptions };
 }

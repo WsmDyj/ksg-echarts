@@ -1,5 +1,6 @@
 import { App, isRef, unref } from 'vue';
 import { Injection, WithInstall } from './types';
+import { isNumber } from 'lodash-es';
 
 type Attrs = {
   [key: string]: any;
@@ -34,4 +35,12 @@ export function unwrapInjected<T, V>(injection: Injection<T>, defaultValue: V): 
     return value.value || defaultValue;
   }
   return value || defaultValue;
+}
+
+export const computePx = (px: string | number): string => {
+  return isNumber(px) ? `${px}px` : px;
+}
+
+export function computePercentage(num, total) {
+  return Math.round((num / total) * 10000) / 100.0; // 小数点后两位百分比
 }

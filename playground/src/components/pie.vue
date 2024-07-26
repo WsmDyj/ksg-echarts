@@ -1,39 +1,42 @@
 <template>
-   <ksg-line-chart :loading="loading"  ref="chartRef" :data="chartData" :option="option"/>
+  <ksg-bar-chart :data="chartData" :option="option"/>
 </template>
-<script setup lang="ts">
-import { onMounted, ref, Ref } from 'vue';
-import {useChart} from '../../../packages/'
- const chartRef = ref<HTMLDivElement | null>(null);
-const chartData = ref([]);
-const { setOptions } = useChart(chartRef)
+<script setup>
+import { ref } from 'vue';
+const chartData = ref([
+  { week: 'Mon', pv: 256, uv: 287 },
+  { week: 'Tue', pv: 767, uv: 707 },
+  { week: 'Wed', pv: 1356, uv: 1756},
+  { week: 'Thu', pv: 2087, uv: 1822 },
+  { week: 'Fir', pv: 803, uv: 987 },
+  { week: 'Sat', pv: 582, uv: 432 },
+  { week: 'Sun', pv: 432, uv: 322 }
+]);
 const option = ref({
-  // series: {
-  //   smooth: true
-  // }
-})
-const loading = ref(false)
-onMounted(() => {
-  loading.value = true
-  setTimeout(() => {
-    chartData.value = [
-      { week: 'Mon', vue: 3000, react: 2000, Angular: 827 },
-  { week: 'Tue', vue: 3500, react: 2000, Angular: 949 },
-  { week: 'Wed', vue: 3900, react: 2600, Angular: 1400 },
-  { week: 'Thu', vue: 3100, react: 2300, Angular: 1000 },
-  { week: 'Fir', vue: 3200, react: 2300, Angular: 884 },
-  { week: 'Sat', vue: 3100, react: 2000, Angular: 911 },
-  { week: 'Sun', vue: 3600, react: 2600 , Angular: 983 }
-    ]
-    loading.value = false
-setOptions({
-  title: {
-    text: '自动设置title',
+  stack: {
+    sum: [ 'PV', 'UV' ]
   },
+  yAxis: {  
+    max : 100,// 设置最大值是多少
+    splitNumber: 5,// 设置分几段显示
+    axisLabel: {  
+      formatter: '{value} %'  // 给每个数值添加%
+    },
+  }  
+  ,
+  // 开启百分比模式
+  percentage: true,
   series: {
-    smooth: true
+    tooltip: {
+      formatter: function(params) {
+        const {dimensionNames, value } = params
+        const name = value[dimensionNames.slice(0, 1)]
+        const tooltipContent = dimensionNames.slice(1, dimensionNames.length)?.filter(it => it)?.map(v => {
+          return `${v}：${value[v]} %`
+        }).join('<br/>')
+        return name + '<br/>' + tooltipContent
+      }
+    }
   }
-})
-  }, 2000);
 })
 </script>

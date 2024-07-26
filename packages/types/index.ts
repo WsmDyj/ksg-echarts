@@ -1,6 +1,5 @@
 import { App, Ref } from "vue";
 export * from './echarts'
-export * from './loading'
 
 import { init } from 'echarts/core';
 import { EChartsOption, type SetOptionOpts } from 'echarts';
