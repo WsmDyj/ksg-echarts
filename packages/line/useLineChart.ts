@@ -1,5 +1,5 @@
-import { Option, KsgChartsData, ChartCommonOption } from '../types';
-import { ref } from 'vue';
+import { Option, KsgChartsData, ChartCommonOption, AnyRecord } from '../types';
+import { ref, Ref } from 'vue';
 import { useComputeDataset } from '../base/hooks/useComputeDataset';
 import { merge } from 'lodash-es';
 import { LineSeriesOption } from 'echarts/charts';
@@ -17,10 +17,13 @@ export interface LineOptions extends Option {
   option?: KsgLineOptions;
 }
 
-export function useLineChart() {
-  const option = ref<LineOptions | undefined>(undefined);
+export function useLineChart(): {
+  option: Ref<AnyRecord | null>;
+  setOptions: (arg: LineOptions) => void;
+} {
+  const option = ref<LineOptions | null>(null);
   // 配置数据集
-  function getDataset(data: KsgChartsData) {
+  function getDataset(data?: KsgChartsData) {
     if (!data || !data?.length) return;
     const { dataset } = useComputeDataset(data);
     return dataset;

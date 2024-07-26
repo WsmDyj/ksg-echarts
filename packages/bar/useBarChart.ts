@@ -1,5 +1,5 @@
-import { Option, KsgChartsData, ChartCommonOption } from '../types';
-import { ref } from 'vue';
+import { Option, KsgChartsData, ChartCommonOption, AnyRecord } from '../types';
+import { Ref, ref, UnwrapRef } from 'vue';
 import { useComputeDataset } from '../base/hooks/useComputeDataset';
 import { get, merge } from 'lodash-es';
 import { BarSeriesOption } from 'echarts/charts';
@@ -20,17 +20,20 @@ export interface BarOptions extends Option {
   option?: KsgBarOptions;
 }
 
-export default function useBarChart() {
-  const option = ref<Option | undefined>(undefined);
+export default function useBarChart(): {
+  option: Ref<AnyRecord | null>;
+  setOptions: (arg: BarOptions) => void;
+} {
+  const option = ref<BarOptions | null>(null);
 
   // 配置数据集
   function getDataset(props: BarOptions, isRowBar: boolean) {
     const { dataset, dimensions } = useComputeDataset(props.data);
     const keys = dimensions.slice(1, dimensions.length);
     // 开启百分比模式
-    let data = props.data;
+    let data: KsgChartsData = props.data || [];
     const percentage = props.option?.percentage;
-    if (percentage) {
+    if (percentage && data) {
       data = data.map((item) => {
         const sum = keys.reduce(
           (acc: number, cur: keyof typeof item) => acc + parseFloat(item[cur]),
@@ -40,9 +43,9 @@ export default function useBarChart() {
           item[it] = computePercentage(item[it], sum);
         });
         return item;
-      });
+      }, 0);
     }
-    if (isRowBar) {
+    if (isRowBar && data) {
       data = data.map((item) => {
         const reverseKeys = dimensions.reverse();
         const newItem = {};

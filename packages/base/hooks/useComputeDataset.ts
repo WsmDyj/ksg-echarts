@@ -1,6 +1,6 @@
 import { KsgChartsData } from "../../types";
 
-export function useComputeDataset(data: KsgChartsData) {
+export function useComputeDataset(data?: KsgChartsData) {
   const dimensions = new Set()
   if (data && data.length) {
      data.forEach((it) => {

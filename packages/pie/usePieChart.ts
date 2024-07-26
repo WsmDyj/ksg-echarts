@@ -1,8 +1,8 @@
-import { Option, KsgChartsData, ChartCommonOption } from '../types';
-import { ref } from 'vue';
+import { Option, KsgChartsData, ChartCommonOption, AnyRecord } from '../types';
+import { Ref, ref } from 'vue';
 import { useComputeDataset } from '../base/hooks/useComputeDataset';
 import { merge } from 'lodash-es';
-import { PieSeriesOption } from 'echarts/charts';
+import type { PieSeriesOption } from 'echarts/charts';
 import { ComposeOption } from 'echarts/core';
 export type PieChartOptions = ComposeOption<PieSeriesOption | ChartCommonOption>;
 
@@ -18,10 +18,13 @@ export interface PieOptions extends Option {
   option?: KsgPieOptions;
 }
 
-export default function usePieChart() {
-  const option = ref<Option | undefined>(undefined);
+export default function usePieChart(): {
+  option: Ref<AnyRecord | null>;
+  setOptions: (arg: PieOptions) => void;
+} {
+  const option = ref<PieOptions | null>(null);
   // 配置数据集
-  function getDataset(data: KsgChartsData) {
+  function getDataset(data?: KsgChartsData) {
     if (!data || !data?.length) return;
     const { dataset } = useComputeDataset(data);
     return dataset;

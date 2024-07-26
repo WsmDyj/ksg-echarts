@@ -1,7 +1,7 @@
 {
   "name": "ksg-echarts",
-  "description": "echarts组件",
-  "version": "0.0.11",
+  "description": "vue3 echarts组件",
+  "version": "0.0.13",
   "repository": {
     "type": "git",
     "url": "https://github.com/WsmDyj/ksg-echarts"

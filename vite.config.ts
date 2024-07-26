@@ -8,7 +8,7 @@ import dtsPlugin from 'vite-plugin-dts';
 export default defineConfig({
   build: {
     rollupOptions: {
-      external: ['echarts', 'zrender', 'lodash', 'dayjs', 'lodash-es', 'vue'],
+      external: [/^echarts/, 'zrender', 'lodash', 'dayjs', 'lodash-es', 'vue'],
       output: [
         {
           format: 'es',
@@ -29,7 +29,7 @@ export default defineConfig({
     },
     lib: {
       entry: resolve(__dirname, 'packages/index.ts'),
-      name: 'ksg-echarts',
+      name: 'ksg-echarts'
     }
   },
   plugins: [
