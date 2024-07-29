@@ -7,16 +7,17 @@ import { merge } from 'lodash-es'
    setOptions: (option: Option) => void;
  }
 
-export default function useKsgChart(elRef: Ref<any>, option: Option): UseKsgChart {
+export default function useKsgChart(elRef: Ref<any>, option?: Option): UseKsgChart {
   
   watchEffect(() => {
     if (option && elRef.value) {
       nextTick(() => {
-        elRef.value?.setInitOptions(option);
+        const previousOpt = elRef.value?.getOptions();
+        elRef.value?.setInitOptions(merge(previousOpt, option));
       });
     }
   });
-
+  
   function setChartData(data: KsgChartsData) {
     if (!elRef.value) {
       console.warn('get chart ref is error');

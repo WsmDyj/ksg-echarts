@@ -147,3 +147,8 @@ const option = ref({
 </script>
 ```
 :::
+
+## 自定义Api
+| 配置项 | 说明 | 类型 | 可选值 | 默认值 |
+| --- | --- | --- | --- | --- |
+| variant | 饼图类型 | string | solid(实心)、donut(圆环) |  donut |

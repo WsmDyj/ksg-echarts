@@ -4,7 +4,7 @@ import {
   ref, computed,
   getCurrentInstance,
   ComponentInternalInstance,
-  watchEffect
+  watch
 } from 'vue';
 import { KsgBaseChartExpose } from "../chart";
 import KsgBaseChart from '..';
@@ -20,9 +20,9 @@ export default function useBaseChart(assemblyHook) {
   const ksgBaseChartRef = shallowRef<InstanceType<typeof KsgBaseChart> & KsgBaseChartExpose>();
   const { option, setOptions } = assemblyHook();
 
-  watchEffect(() => {
+  watch(() => instance.props, () => {
     setOptions(merge({ option: initOption.value }, instance.props));
-  });
+  }, { deep: true, immediate: true});
 
   const options = computed(() => {
     return {
@@ -33,13 +33,15 @@ export default function useBaseChart(assemblyHook) {
   });
 
   // Mount the method onto the instance and expose it to the public
-  Object.assign(instance.proxy, {
-    getInstance: () => ksgBaseChartRef.value?.getInstance(),
-    getOptions: () => unref(option),
-    setOptions: (config) => setOptions(config),
-    setInitOptions: (option) => initOption.value = option
-  });
-
+  if (instance.proxy) {
+    Object.assign(instance.proxy, {
+      getInstance: () => ksgBaseChartRef.value?.getInstance(),
+      getOptions: () => unref(option),
+      setOptions: (config) => setOptions(config),
+      setInitOptions: (option) => (initOption.value = option)
+    });
+  }
+  
   return {
     ksgBaseChartRef,
     options

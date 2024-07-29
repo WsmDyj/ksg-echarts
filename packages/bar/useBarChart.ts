@@ -13,6 +13,7 @@ export type BarChartOptions = ComposeOption<BarSeriesOption | ChartCommonOption>
  */
 export interface KsgBarOptions extends Option {
   percentage?: boolean; //开启百分比
+  direction?: 'row' | 'column';
 }
 
 export interface BarOptions extends Option {

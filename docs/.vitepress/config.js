@@ -88,6 +88,10 @@ export default defineConfig({
               link: '/guide/option'
             },
             {
+              text: 'useKsgChart方式',
+              link: '/guide/hook'
+            },
+            {
               text: '更新日志',
               link: '/guide/log'
             }

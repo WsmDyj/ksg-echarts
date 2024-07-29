@@ -177,3 +177,9 @@ const option = ref({
 </script>
 ```
 :::
+
+## 自定义Api
+| 配置项 | 说明 | 类型 | 可选值 | 默认值 |
+| --- | --- | --- | --- | --- |
+| percentage | 开启百分比模式 | booble | - |  false |
+| direction | 柱状图方向 | string | row(条形图)、column(柱状图) | column  |

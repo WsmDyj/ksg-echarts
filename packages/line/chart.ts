@@ -27,6 +27,6 @@ export default defineComponent({
       ...this.options,
       ref: (el) => this.ksgBaseChartRef = el
     };
-    return h(KsgBaseChart, attrs);
+    return h(KsgBaseChart, attrs, this.$slots.default);
   }
 });

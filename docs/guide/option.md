@@ -72,16 +72,21 @@ dataset: {
 
 
 
-ksg-echarts提供了五个 Injection key，通过 provide 可全局设置图表的参数：
- 
- 1. loading-options =>  **LOADING_OPTIONS_KEY**
- 2. init-options => **INIT_OPTIONS_KEY**
- 3. theme => **THEME_KEY**
- 4. palette => **PALETTE_KEY**
- 5. update-options => **UPDATE_OPTIONS_KEY**
- 
- ```js
+ksg-echarts 还提供了五个 Injection key，通过 provide 可全局设置图表的参数：
+
+## Injection key
+
+| key | 说明 |
+| --- | --- | 
+| LOADING_OPTIONS_KEY | 配置loading-options
+| INIT_OPTIONS_KEY | 初始化图表配置init-options
+| THEME_KEY | 初始化图表主题theme
+| PALETTE_KEY | 初始化图表配色， 默认echarts颜色palette
+| UPDATE_OPTIONS_KEY | 更新配置文件pdate-options
+
+**具体用法**
+```js
 provide(INIT_OPTIONS_KEY, { renderer: 'svg' })
 provide(THEME_KEY, 'dark')
 ... // 其他设置
- ```
+```
