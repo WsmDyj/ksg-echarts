@@ -88,10 +88,6 @@ export default defineConfig({
               link: '/guide/option'
             },
             {
-              text: 'useKsgChart方式',
-              link: '/guide/hook'
-            },
-            {
               text: '更新日志',
               link: '/guide/log'
             }
@@ -133,7 +129,24 @@ export default defineConfig({
             },
           ]
         },
-        
+        {
+          text: '🌵扩展',
+          collapsible: false,
+          items: [
+            {
+              text: 'useKsgChart方式',
+              link: '/guide/hook'
+            },
+            {
+              text: '自定义图表',
+              link: '/guide/charts/custom'
+            },
+            {
+              text: '组合图表',
+              link: '/guide/charts/combination'
+            },
+          ]
+        }
       ],
     },
 

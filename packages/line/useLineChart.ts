@@ -1,6 +1,6 @@
 import { Option, KsgChartsData, ChartCommonOption, AnyRecord } from '../types';
 import { ref, Ref } from 'vue';
-import { useComputeDataset } from '../base/hooks/useComputeDataset';
+import useComputeDataset from '../base/hooks/useComputeDataset';
 import { merge } from 'lodash-es';
 import { LineSeriesOption } from 'echarts/charts';
 import { ComposeOption } from 'echarts/core';
@@ -81,7 +81,7 @@ export function useLineChart(): {
       props.option
     );
     option.value = mergeOption;
+    console.log(mergeOption)
   }
-
   return { option, setOptions };
 }

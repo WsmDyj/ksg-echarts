@@ -1,6 +1,6 @@
 import { Option, KsgChartsData, ChartCommonOption, AnyRecord } from '../types';
-import { Ref, ref, UnwrapRef } from 'vue';
-import { useComputeDataset } from '../base/hooks/useComputeDataset';
+import { Ref, ref } from 'vue';
+import useComputeDataset from '../base/hooks/useComputeDataset';
 import { get, merge } from 'lodash-es';
 import { BarSeriesOption } from 'echarts/charts';
 import { ComposeOption } from 'echarts/core';

@@ -1,6 +1,6 @@
 import { BarChart } from 'echarts/charts';
 import { use } from 'echarts/core';
-import { PropType, defineComponent, h, renderSlot } from 'vue';
+import { PropType, defineComponent, h } from 'vue';
 import { basicProps, KsgBaseChart } from '../base';
 import { KsgChartsData } from '../types';
 import useBarChart from './useBarChart';

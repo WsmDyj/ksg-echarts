@@ -38,6 +38,16 @@ export default defineComponent({
     const option = ref<Option | null>(null);
     const instanceRef = shallowRef<InstanceType<typeof VChart>>();
 
+    function validataData() {
+      isHasData.value = props.option?.dataset
+        ? isArray(props.option.dataset)
+          ? true
+          : !!props.option?.dataset.source?.length
+        : isArray(props.option.series)
+        ? (isHasData.value = props.option.series.some((it) => it.data))
+        : (isHasData.value = Reflect.has(props.option.series, 'data'));
+    }
+
     watch(() => props.option, (value) => {
       if (value) {
         const legendTemp = {
@@ -46,11 +56,8 @@ export default defineComponent({
           bottom: 'bottom'
         };
         // Determine if there is a value
-        isHasData.value = props.option?.dataset
-          ? isArray(props.option.dataset)
-            ? true
-            : !!props.option?.dataset.source?.length
-          : false;
+        validataData();
+        // 兼容初始化配置
         const computedOption = {
           ...props.option,
           legend: merge(legendTemp, props.option?.legend)

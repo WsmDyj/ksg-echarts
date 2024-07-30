@@ -1,6 +1,6 @@
 import { Option, KsgChartsData, ChartCommonOption, AnyRecord } from '../types';
 import { Ref, ref } from 'vue';
-import { useComputeDataset } from '../base/hooks/useComputeDataset';
+import useComputeDataset from '../base/hooks/useComputeDataset';
 import { merge } from 'lodash-es';
 import type { PieSeriesOption } from 'echarts/charts';
 import { ComposeOption } from 'echarts/core';

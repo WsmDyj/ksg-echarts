@@ -12,7 +12,7 @@ useKsgChart 是一个基础的hook，对所有的图表都适用，其中返回�
 * **setChartData**：设置图表的值
 * **setOptions**：设置图表的配置options
 
-另外 useKsgChart参数也接收两个，一个是组件的实例，另一个是初始化图表的配置，可选
+useKsgChart 接收两个参数，一个是**组件的实例**（必填），另一个是初始化图表的配置（可选）
 ```js
 const { setChartData, setOptions } = useKsgChart(chartRef, {
   title: {
@@ -22,7 +22,7 @@ const { setChartData, setOptions } = useKsgChart(chartRef, {
 ```
 注意：第二个参数不具备依赖响应，尽量避开响应式数据，如果有动态需求，请使用setOptions
 
-> setOptions 是在组件初始化之后调用echarts的setOption方法，所以使用之前确保图表实例已经生成
+> setOptions 是在组件初始化之后调用 Echarts 的 setOption 方法，所以使用之前确保图表实例已经生成，另外setOptions参数只支持 Echarts 的配置项，无法解析各组件自定义的api
 
 ## 案例
 :::demo
