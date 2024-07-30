@@ -20,8 +20,7 @@ import { KsgBaseChart } from 'ksg-echarts'
 import { ref } from 'vue';
 import { FunnelChart } from 'echarts/charts';
 import { use } from 'echarts/core';
-// 注册漏斗图
-use([FunnelChart]);
+use([FunnelChart]); // 注册漏斗图
 const option = ref({
   series: [{
     name: 'Funnel',
@@ -35,5 +34,30 @@ const option = ref({
     ]
   }]
 })
+</script>
+```
+:::
+
+另外，ksg-echarts 还提供了 **useComputeDataset** 用于格式化数据处理成 dataset 数据集的方式。
+
+```js
+import { useComputeDataset } from 'ksg-echarts'
+```
+
+```js
+const chartData = [
+  { name: "访问", value: 60, },
+  { name: "咨询", value: 40,  },
+  { name: "订单", value: 20,  },
+  { name: "点击", value: 80, },
+  { name: "展现", value: 100,  },
+]
+const option = {
+  // 自定计算出dataset配置项
+  ...useComputeDataset(chartData.value),
+  series: [{
+    type: 'funnel',
+  }]
+}
 </script>
 ```
